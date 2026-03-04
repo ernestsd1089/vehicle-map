@@ -1,0 +1,7 @@
+{
+  "jest.jestCommandLine": "npx jest",
+  "jest.autoRun": "off",
+  "jest.showCoverageOnLoad": false,
+  "jest.runMode": "on-demand",
+  "jest.rootPath": "."
+}
