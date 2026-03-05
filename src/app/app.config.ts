@@ -6,6 +6,8 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 import { UsersFeature } from './features/vehicle-tracker/store/users/users.reducer';
 import { UsersEffects } from './features/vehicle-tracker/store/users/users.effects';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,5 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideState(UsersFeature),
     provideEffects([UsersEffects]),
     provideStoreDevtools({ maxAge: 25 }),
+    provideRouter(routes),
   ],
 };
