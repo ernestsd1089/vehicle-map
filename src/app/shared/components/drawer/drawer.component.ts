@@ -5,7 +5,7 @@ import { TailwindWidth } from "../../types/tailwind.types";
     selector: 'app-drawer',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div [class]="currentWidth"
+        <div [class]="currentWidth()"
             class="transition-all duration-300 h-full bg-white shadow-lg overflow-hidden">
             <ng-content />
         </div>
