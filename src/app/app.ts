@@ -1,7 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { UsersService } from './features/vehicle-tracker/services/users.service';
+import { MobiService } from './features/vehicle-tracker/services/mobi.service';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +9,8 @@ import { UsersService } from './features/vehicle-tracker/services/users.service'
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
-  userService = inject(UsersService);
+  mobiService = inject(MobiService);
   ngOnInit() {
-    this.userService.getUsers().subscribe(data => console.log(data));
+    this.mobiService.getUsers().subscribe(data => console.log(data));
   }
 }
