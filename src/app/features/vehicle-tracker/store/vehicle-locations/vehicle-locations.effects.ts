@@ -1,0 +1,31 @@
+import { inject, Injectable } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { catchError, map, of, switchMap } from 'rxjs';
+
+import { MobiService } from '../../services/mobi.service';
+import { UsersActions } from '../users/users.actions';
+import { VehicleLocationsActions } from './vehicle-locations.actions';
+
+@Injectable()
+export class VehicleLocationsEffects {
+  private readonly actions$ = inject(Actions);
+  private readonly mobiService = inject(MobiService);
+
+  loadLocationsOnUserSelect$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UsersActions.selectUser),
+      switchMap(({ userId }) =>
+        this.mobiService.getLocations(userId).pipe(
+          map((locations) => VehicleLocationsActions.loadLocationsSuccess({ locations })),
+          catchError((error: unknown) =>
+            of(
+              VehicleLocationsActions.loadLocationsFailure({
+                error: error instanceof Error ? error.message : 'Failed to load locations',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
