@@ -1,1 +1,12 @@
-<app-list-view />
+<mat-drawer-container class="h-screen">
+  <mat-drawer #drawer opened mode="side" class="overflow-hidden">
+    <div class="bg-gray-100 h-screen p-4">
+      <app-list-view />
+    </div>
+  </mat-drawer>
+  <mat-drawer-content class="relative">
+    <button mat-icon-button (click)="drawer.toggle()" class="fixed top-1/2 z-10">
+      <mat-icon>{{ drawer.opened ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+    </button>
+  </mat-drawer-content>
+</mat-drawer-container>

@@ -1,0 +1,13 @@
+<mat-nav-list>
+  @for (user of users(); track user.userid) {
+    <mat-list-item
+      [activated]="selectedUserId() === user.userid"
+      (click)="selectUser(user.userid)"
+      class="cursor-pointer! my-4"
+    >
+      <img matListItemAvatar [src]="user.owner.foto" [alt]="user.owner.name" />
+      <span matListItemTitle>{{ user.owner.name }} {{ user.owner.surname }}</span>
+      <span matListItemLine>{{ user.vehicles.length }} vehicle(s)</span>
+    </mat-list-item>
+  }
+</mat-nav-list>

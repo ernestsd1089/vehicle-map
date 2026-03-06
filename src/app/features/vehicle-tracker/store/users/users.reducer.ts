@@ -22,5 +22,9 @@ export const UsersFeature = createFeature({
       loading: false,
       error,
     })),
+    on(UsersActions.selectUser, (state, { userId }) => ({
+      ...state,
+      selectedUserId: userId,
+    })),
   ),
 });
