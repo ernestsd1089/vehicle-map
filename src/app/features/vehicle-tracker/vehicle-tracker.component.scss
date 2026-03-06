@@ -1,0 +1,15 @@
+$drawer-width-lg: 500px;
+$drawer-width-md: 380px;
+$drawer-width-sm: 280px;
+
+.mat-drawer {
+  width: $drawer-width-lg;
+
+  @media (max-width: 1024px) {
+    width: $drawer-width-md;
+  }
+
+  @media (max-width: 768px) {
+    width: $drawer-width-sm;
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "http://mobi.connectedcar360.net",
+    "changeOrigin": true,
+    "secure": false
+  }
+}
