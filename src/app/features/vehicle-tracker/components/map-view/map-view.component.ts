@@ -13,6 +13,7 @@ import { fromLonLat } from 'ol/proj';
 import { Style, Circle as CircleStyle, Fill, Stroke } from 'ol/style';
 
 import { selectVehiclesWithLocations } from '../../store/vehicle-locations/vehicle-locations.reducer';
+import { defaults, Zoom } from 'ol/control';
 
 @Component({
   selector: 'app-map-view',
@@ -38,6 +39,11 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
         center: fromLonLat([24.105186, 56.946285]),
         zoom: 12,
       }),
+      controls: defaults({ zoom: false }).extend([
+        new Zoom({
+          className: 'ol-zoom',
+        }),
+      ]),
     });
 
     this.subscription = this.store.select(selectVehiclesWithLocations).subscribe((vehicles) => {

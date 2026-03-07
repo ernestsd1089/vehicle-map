@@ -39,3 +39,29 @@ body {
   margin: 0;
   height: 100%;
 }
+
+.ol-zoom {
+  bottom: 2.5rem;
+  right: 1rem;
+  top: auto !important;
+  left: auto !important;
+  background: transparent;
+
+  .ol-zoom-in,
+  .ol-zoom-out {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.5rem;
+    line-height: 2.5rem;
+    border-radius: 0.5rem;
+    background-color: white;
+    margin-bottom: 4px;
+    border: 1px solid gray;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .ol-zoom-in:hover,
+  .ol-zoom-out:hover {
+    cursor: pointer;
+  }
+}
