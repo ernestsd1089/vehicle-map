@@ -3,11 +3,11 @@ import { provideEffects } from '@ngrx/effects';
 
 import { UsersFeature } from './store/users/users.reducer';
 import { UsersEffects } from './store/users/users.effects';
-import { VehicleLocationsFeature } from './store/vehicle-locations/vehicle-locations.reducer';
-import { VehicleLocationsEffects } from './store/vehicle-locations/vehicle-locations.effects';
+import { VehicleDataFeature } from './store/vehicle-data/vehicle-data.reducer';
+import { VehicleDataEffects } from './store/vehicle-data/vehicle-data.effects';
 
 export const vehicleTrackerProviders = [
   provideState(UsersFeature),
-  provideState(VehicleLocationsFeature),
-  provideEffects([UsersEffects, VehicleLocationsEffects]),
+  provideState(VehicleDataFeature),
+  provideEffects([UsersEffects, VehicleDataEffects]),
 ];

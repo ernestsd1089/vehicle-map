@@ -4,10 +4,10 @@ import { catchError, map, of, switchMap } from 'rxjs';
 
 import { MobiService } from '../../services/mobi.service';
 import { UsersActions } from '../users/users.actions';
-import { VehicleLocationsActions } from './vehicle-locations.actions';
+import { VehicleDataActions } from './vehicle-data.actions';
 
 @Injectable()
-export class VehicleLocationsEffects {
+export class VehicleDataEffects {
   private readonly actions$ = inject(Actions);
   private readonly mobiService = inject(MobiService);
 
@@ -16,10 +16,10 @@ export class VehicleLocationsEffects {
       ofType(UsersActions.selectUser),
       switchMap(({ userId }) =>
         this.mobiService.getLocations(userId).pipe(
-          map((locations) => VehicleLocationsActions.loadLocationsSuccess({ locations })),
+          map((locations) => VehicleDataActions.loadLocationsSuccess({ locations })),
           catchError((error: unknown) =>
             of(
-              VehicleLocationsActions.loadLocationsFailure({
+              VehicleDataActions.loadLocationsFailure({
                 error: error instanceof Error ? error.message : 'Failed to load locations',
               }),
             ),

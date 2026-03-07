@@ -1,0 +1,10 @@
+@if (vehicle(); as v) {
+  <div class="p-4 flex flex-col gap-3 min-w-48">
+    <img [src]="v.foto" [alt]="v.make" class="rounded-xl object-cover" />
+    <div>
+      <h3 class="text-base font-semibold">{{ v.year }} {{ v.make }} {{ v.model }}</h3>
+      <p class="text-sm text-gray-500">{{ v.color }}</p>
+      <p class="text-sm text-gray-400">{{ v.vin }}</p>
+    </div>
+  </div>
+}

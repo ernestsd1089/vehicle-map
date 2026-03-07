@@ -12,7 +12,8 @@ import Point from 'ol/geom/Point';
 import { fromLonLat } from 'ol/proj';
 import { Style, Circle as CircleStyle, Fill, Stroke } from 'ol/style';
 
-import { selectVehiclesWithLocations } from '../../store/vehicle-locations/vehicle-locations.reducer';
+import { selectVehiclesWithLocations } from '../../store/vehicle-data/vehicle-data.reducer';
+import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
 import { defaults, Zoom } from 'ol/control';
 
 @Component({
@@ -46,6 +47,20 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
       ]),
     });
 
+    this.map.on('click', (event) => {
+      const feature = this.map.forEachFeatureAtPixel(event.pixel, (f) => f);
+      if (feature) {
+        this.store.dispatch(VehicleDataActions.selectVehicle({ vehicleId: feature.get('vehicleId') }));
+      } else {
+        this.store.dispatch(VehicleDataActions.deselectVehicle());
+      }
+    });
+
+    this.map.on('pointermove', (event) => {
+      const hit = this.map.hasFeatureAtPixel(event.pixel);
+      this.map.getTargetElement().style.cursor = hit ? 'pointer' : '';
+    });
+
     this.subscription = this.store.select(selectVehiclesWithLocations).subscribe((vehicles) => {
       this.vectorSource.clear();
 
@@ -55,6 +70,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
           const feature = new Feature({
             geometry: new Point(fromLonLat([v.location!.lon, v.location!.lat])),
           });
+          feature.set('vehicleId', v.vehicleid);
           feature.setStyle(
             new Style({
               image: new CircleStyle({
