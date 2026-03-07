@@ -46,10 +46,13 @@ export const selectVehiclesWithLocations = createSelector(
   (selectedUserId, users, locations) => {
     const user = users.find((u) => u.userid === selectedUserId);
     if (!user) return [];
-    return user.vehicles.map((vehicle) => ({
-      ...vehicle,
-      location: isValidLocation(locations[vehicle.vehicleid]) ? locations[vehicle.vehicleid] : null,
-    }));
+    return user.vehicles.map((vehicle) => {
+      const l = locations[vehicle.vehicleid];
+      return {
+        ...vehicle,
+        location: l && isValidLocation(l.lat, l.lon) ? l : null,
+      };
+    });
   },
 );
 
