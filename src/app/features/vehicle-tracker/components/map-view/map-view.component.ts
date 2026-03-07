@@ -51,6 +51,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
 
     this.map.on('click', () => {
       this.store.dispatch(VehicleDataActions.deselectVehicle());
+      this.markerRefs.forEach((r) => r.setInput('selected', false));
     });
 
     this.subscription = this.store.select(selectVehiclesWithLocations).subscribe((vehicles) => {
@@ -67,6 +68,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
         el.addEventListener('click', (event) => {
           event.stopPropagation();
           this.store.dispatch(VehicleDataActions.selectVehicle({ vehicleId: v.vehicleid }));
+          this.markerRefs.forEach((r) => r.setInput('selected', false));
+          ref.setInput('selected', true);
         });
 
         const overlay = new Overlay({

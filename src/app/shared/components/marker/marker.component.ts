@@ -17,12 +17,14 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
   styleUrl: './marker.component.scss',
   host: {
     class: 'marker',
+    '[class.selected]': 'selected()',
     '[style.background-color]': 'color()',
   },
 })
 export class MarkerComponent {
   color = input<string>(AZURE_BLUE);
   icon = input<string>('');
+  selected = input<boolean>(false);
 
   iconColor = computed(() => contrastColor(this.color()));
   iconMask = computed(() => `url('/icons/${this.icon()}.svg') center / contain no-repeat`);
