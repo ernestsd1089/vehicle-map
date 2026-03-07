@@ -1,4 +1,6 @@
 import { Component, inject } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, of } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -12,6 +14,7 @@ import { GeocodingService } from '../../../../shared/services/geocoding.service'
 @Component({
   selector: 'app-vehicle-details',
   templateUrl: './vehicle-details.component.html',
+  imports: [MatIconModule, MatDividerModule],
 })
 export class VehicleDetailsComponent {
   private readonly store = inject(Store);

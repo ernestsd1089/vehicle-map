@@ -1,13 +1,39 @@
 @if (vehicle(); as v) {
-  <div class="flex flex-col gap-3 min-w-56 max-w-72">
-    <img [src]="v.foto" [alt]="v.make + ' ' + v.model" class="w-full object-cover" />
-    <div class="px-4 pb-4 flex flex-col gap-1">
+  <div class="flex flex-col min-w-64 max-w-80">
+    <!-- Hero: image + title -->
+    <img [src]="v.foto" [alt]="v.make + ' ' + v.model" class="w-full object-cover h-40" />
+    <div class="px-4 pt-3 pb-2">
       <h3 class="text-base font-semibold">{{ v.year }} {{ v.make }} {{ v.model }}</h3>
-      @if (address() === undefined) {
-        <p class="text-sm text-gray-400">Loading address...</p>
-      } @else if (address()) {
-        <p class="text-sm text-gray-500">{{ address() }}</p>
-      }
+    </div>
+
+    <mat-divider />
+
+    <!-- Data rows -->
+    <div class="px-4 py-3 flex flex-col gap-4">
+      <div class="flex items-center gap-4">
+        <mat-icon class="text-gray-400 shrink-0">palette</mat-icon>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-700 italic">{{ v.color }}</span>
+          <span
+            class="w-8 h-4 rounded border border-gray-200 shadow-sm shrink-0"
+            [style.background-color]="v.color"
+          ></span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <mat-icon class="text-gray-400 shrink-0">fingerprint</mat-icon>
+        <span class="text-sm text-gray-700 break-all">{{ v.vin }}</span>
+      </div>
+
+      <div class="flex items-start gap-4">
+        <mat-icon class="text-gray-400 shrink-0">location_on</mat-icon>
+        @if (address() === undefined) {
+          <span class="text-sm text-gray-400">Loading address...</span>
+        } @else {
+          <span class="text-sm text-gray-700">{{ address() }}</span>
+        }
+      </div>
     </div>
   </div>
 }
