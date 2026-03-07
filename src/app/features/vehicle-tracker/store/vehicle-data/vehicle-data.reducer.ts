@@ -1,6 +1,7 @@
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 
 import { isValidLocation } from '../../../../shared/utils/location.utils';
+import { VehicleLocation } from '../../models/location.model';
 
 import { UsersActions } from '../users/users.actions';
 import { UsersFeature } from '../users/users.reducer';
@@ -57,7 +58,7 @@ export const selectVehiclesWithLocations = createSelector(
 );
 
 export const selectLocatedVehicles = createSelector(selectVehiclesWithLocations, (vehicles) =>
-  vehicles.filter((v): v is typeof v & { location: NonNullable<(typeof v)['location']> } => v.location !== null),
+  vehicles.filter((v): v is typeof v & { location: VehicleLocation } => v.location !== null),
 );
 
 export const selectSelectedVehicleLocation = createSelector(
