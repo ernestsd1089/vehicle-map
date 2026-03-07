@@ -51,6 +51,15 @@ export const selectVehiclesWithLocations = createSelector(
   },
 );
 
+export const selectSelectedVehicleLocation = createSelector(
+  VehicleDataFeature.selectSelectedVehicleId,
+  VehicleDataFeature.selectLocations,
+  (selectedVehicleId, locations) => {
+    if (!selectedVehicleId) return null;
+    return locations[selectedVehicleId] ?? null;
+  },
+);
+
 export const selectSelectedVehicle = createSelector(
   UsersFeature.selectUsers,
   VehicleDataFeature.selectSelectedVehicleId,
