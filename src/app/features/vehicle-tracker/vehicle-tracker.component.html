@@ -1,12 +1,24 @@
 <mat-drawer-container class="h-screen">
   <mat-drawer #drawer opened mode="side" class="overflow-hidden">
-    <div class="bg-gray-100 h-screen p-4">
+    <div class="bg-white h-screen p-4 rounded-4xl">
       <app-list-view />
     </div>
   </mat-drawer>
-  <mat-drawer-content class="relative">
-    <button mat-icon-button (click)="drawer.toggle()" class="fixed top-1/2 z-10">
+  <mat-drawer-content class="relative overflow-y-hidden!">
+    <button
+      mat-icon-button
+      (click)="drawer.toggle()"
+      class="absolute! top-1/2 -translate-y-1/2 z-20!"
+    >
       <mat-icon>{{ drawer.opened ? 'chevron_left' : 'chevron_right' }}</mat-icon>
     </button>
+
+    @if (selectedVehicleId()) {
+      <app-panel class="absolute m-4 z-50">
+        <app-vehicle-details />
+      </app-panel>
+    }
+
+    <app-map-view />
   </mat-drawer-content>
 </mat-drawer-container>

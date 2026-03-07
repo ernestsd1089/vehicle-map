@@ -1,0 +1,90 @@
+@let location = vehicleLocation();
+
+@if (vehicle(); as v) {
+  <div class="flex flex-col w-96">
+    <div class="relative">
+      @if (imgError()) {
+        <div class="w-full h-40 bg-gray-100 flex items-center justify-center">
+          <mat-icon class="text-gray-300 text-7xl! w-auto! h-auto!">directions_car</mat-icon>
+        </div>
+      }
+      <img
+        [src]="v.foto"
+        [alt]="v.make + ' ' + v.model"
+        [class.hidden]="imgError()"
+        class="w-full"
+        (error)="imgError.set(true)"
+        (load)="imgError.set(false)"
+      />
+      <button
+        mat-icon-button
+        (click)="close()"
+        class="absolute! top-2 right-2 bg-white/70! hover:bg-white! backdrop-blur-sm"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="px-4 pt-3 pb-2">
+      <h3 class="text-base font-semibold">{{ v.year }} {{ v.make }} {{ v.model }}</h3>
+    </div>
+
+    <mat-divider />
+
+    <div class="flex flex-col py-4 px-2">
+      <div
+        class="flex items-center gap-4 px-4 py-3 rounded-lg cursor-pointer hover:bg-gray-300 transition-colors mx-1"
+        matTooltipPosition="left"
+        [matTooltip]="copiedField() === 'color' ? 'Copied!' : 'Copy hex code of the color'"
+        (click)="copy('color', v.color)"
+      >
+        <mat-icon class="text-gray-400 shrink-0">palette</mat-icon>
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-700 italic">{{ v.color }}</span>
+          <span
+            class="w-8 h-4 rounded border-2 shadow-sm shrink-0 outline-2 outline-black border-white"
+            [style.background-color]="v.color"
+          ></span>
+        </div>
+      </div>
+
+      <div
+        class="flex items-center gap-4 px-4 py-3 rounded-lg cursor-pointer hover:bg-gray-300 transition-colors mx-1"
+        matTooltipPosition="left"
+        [matTooltip]="copiedField() === 'vin' ? 'Copied!' : 'Copy vin number'"
+        (click)="copy('vin', v.vin)"
+      >
+        <mat-icon class="text-gray-400 shrink-0">fingerprint</mat-icon>
+        <span class="text-sm text-gray-700 break-all">{{ v.vin }}</span>
+      </div>
+
+      <div class="flex items-center mx-1 hover:bg-gray-300 rounded-lg">
+        <div
+          class="flex items-center gap-4 px-4 py-3 cursor-pointer transition-colors grow"
+          matTooltipPosition="left"
+          [matTooltip]="copiedField() === 'address' ? 'Copied!' : 'Copy address'"
+          (click)="copy('address', address())"
+        >
+          <mat-icon class="text-gray-400 shrink-0">location_on</mat-icon>
+          @if (address() === undefined) {
+            <span class="text-sm text-gray-400">Loading address...</span>
+          } @else {
+            <span class="text-sm text-gray-700">{{ address() }}</span>
+          }
+        </div>
+
+        @if (location) {
+          <a
+            [href]="'https://www.google.com/maps?q=' + location.lat + ',' + location.lon"
+            target="_blank"
+            rel="noopener"
+            mat-icon-button
+            matTooltip="Open in Google Maps"
+            class="shrink-0 self-center text-gray-400 hover:text-gray-700 mr-2"
+          >
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,29 @@
+:host {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+
+  &.selected {
+    transform: scale(1.25);
+    box-shadow:
+      0 0 0 2px white,
+      0 0 0 4px #1a73e8,
+      0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+  }
+}
+
+.icon {
+  display: block;
+  width: 1.4rem;
+  height: 1.4rem;
+}
