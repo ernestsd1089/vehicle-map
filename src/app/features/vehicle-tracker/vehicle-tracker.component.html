@@ -13,7 +13,7 @@
       <mat-icon>{{ drawer.opened ? 'chevron_left' : 'chevron_right' }}</mat-icon>
     </button>
 
-    @if (selectedVehicleId() && drawer.opened) {
+    @if (selectedVehicleId()) {
       <div class="absolute m-4 z-50 bg-white rounded-4xl">
         <app-vehicle-details />
       </div>

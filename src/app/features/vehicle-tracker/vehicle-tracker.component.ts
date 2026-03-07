@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject, ViewChild } from '@angular/core';
 import { ListViewComponent } from './components/list-view/list-view.component';
 import { MobiService } from './services/mobi.service';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Store } from '@ngrx/store';
@@ -24,10 +24,20 @@ import { VehicleDataFeature } from './store/vehicle-data/vehicle-data.reducer';
   ],
 })
 export class VehicleTrackerComponent {
+  @ViewChild('drawer') drawer!: MatDrawer;
+
   mobiService = inject(MobiService);
   store = inject(Store);
 
   selectedVehicleId = this.store.selectSignal(VehicleDataFeature.selectSelectedVehicleId);
+
+  constructor() {
+    effect(() => {
+      if (this.selectedVehicleId()) {
+        this.drawer?.open();
+      }
+    });
+  }
 
   ngOnInit() {
     this.store.dispatch(UsersActions.loadUsers());
