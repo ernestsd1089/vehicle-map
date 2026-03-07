@@ -19,7 +19,7 @@ import { boundingExtent } from 'ol/extent';
 import { fromLonLat } from 'ol/proj';
 import { defaults, Zoom } from 'ol/control';
 
-import { selectVehiclesWithLocations } from '../../store/vehicle-data/vehicle-data.reducer';
+import { selectVehiclesWithLocations, VehicleDataFeature } from '../../store/vehicle-data/vehicle-data.reducer';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
 import { MarkerComponent } from '../../../../shared/components/marker/marker.component';
 
@@ -35,6 +35,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
   private readonly viewContainerRef = inject(ViewContainerRef);
   private map!: Map;
   private subscription!: Subscription;
+  private selectedSub!: Subscription;
   private markerRefs: ComponentRef<MarkerComponent>[] = [];
   private overlays: Overlay[] = [];
 
@@ -53,6 +54,14 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
       this.store.dispatch(VehicleDataActions.deselectVehicle());
       this.markerRefs.forEach((r) => r.setInput('selected', false));
     });
+
+    this.selectedSub = this.store
+      .select(VehicleDataFeature.selectSelectedVehicleId)
+      .subscribe((selectedId) => {
+        if (!selectedId) {
+          this.markerRefs.forEach((r) => r.setInput('selected', false));
+        }
+      });
 
     this.subscription = this.store.select(selectVehiclesWithLocations).subscribe((vehicles) => {
       this.clearMarkers();
@@ -100,6 +109,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.selectedSub?.unsubscribe();
     this.clearMarkers();
     this.map?.setTarget(undefined);
   }
