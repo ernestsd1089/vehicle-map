@@ -18,6 +18,7 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
   host: {
     class: 'marker',
     '[class.selected]': 'selected()',
+    '[class.sm]': 'size() === "sm"',
     '[style.background-color]': 'color()',
   },
 })
@@ -25,6 +26,7 @@ export class MarkerComponent {
   color = input<string>(AZURE_BLUE);
   icon = input<string>('');
   selected = input<boolean>(false);
+  size = input<'sm' | 'md'>('md');
 
   iconColor = computed(() => contrastColor(this.color()));
   iconMask = computed(() => `url('/icons/${this.icon()}.svg') center / contain no-repeat`);

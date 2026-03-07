@@ -12,6 +12,16 @@
     transform 0.15s ease,
     box-shadow 0.15s ease;
 
+  &.sm {
+    width: 1.5rem;
+    height: 1.5rem;
+
+    .icon {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
   &.selected {
     transform: scale(1.25);
     box-shadow:

@@ -1,13 +1,40 @@
 <mat-nav-list>
   @for (user of users(); track user.userid) {
-    <mat-list-item
-      [activated]="selectedUserId() === user.userid"
-      (click)="selectUser(user.userid)"
-      class="cursor-pointer! my-4"
-    >
-      <img matListItemAvatar [src]="user.owner.foto" [alt]="user.owner.name" />
-      <span matListItemTitle>{{ user.owner.name }} {{ user.owner.surname }}</span>
-      <span matListItemLine>{{ user.vehicles.length }} vehicle(s)</span>
-    </mat-list-item>
+    <div class="flex flex-col gap-1 mb-4">
+      <mat-list-item
+        [activated]="selectedUserId() === user.userid"
+        (click)="selectUser(user.userid)"
+        class="cursor-pointer!"
+      >
+        <img matListItemAvatar [src]="user.owner.foto" [alt]="user.owner.name" />
+        <span matListItemTitle>{{ user.owner.name }} {{ user.owner.surname }}</span>
+        <span matListItemLine>{{ user.vehicles.length }} vehicle(s)</span>
+      </mat-list-item>
+
+      @if (selectedUserId() === user.userid) {
+        @for (vehicle of vehiclesWithLocations(); track vehicle.vehicleid) {
+          <mat-list-item
+            [activated]="selectedVehicleId() === vehicle.vehicleid"
+            [disabled]="!vehicle.location"
+            (click)="vehicle.location && selectVehicle(vehicle.vehicleid)"
+            class="cursor-pointer! pl-8!"
+          >
+            <app-marker
+              matListItemAvatar
+              size="sm"
+              icon="car"
+              [color]="vehicle.color"
+              [selected]="selectedVehicleId() === vehicle.vehicleid"
+            />
+            <span matListItemTitle class="text-sm!"
+              >{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</span
+            >
+            @if (!vehicle.location) {
+              <span matListItemLine class="text-xs! text-gray-400">No location available</span>
+            }
+          </mat-list-item>
+        }
+      }
+    </div>
   }
 </mat-nav-list>
