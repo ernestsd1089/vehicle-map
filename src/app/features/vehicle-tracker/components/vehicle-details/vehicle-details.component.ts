@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,7 +13,7 @@ import {
   selectSelectedVehicleLocation,
 } from '../../store/vehicle-data/vehicle-data.reducer';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
-import { GeocodingService } from '../../../../shared/services/geocoding.service';
+import { GeocodingService } from '../../services/geocoding.service';
 
 @Component({
   selector: 'app-vehicle-details',
@@ -25,27 +25,30 @@ export class VehicleDetailsComponent {
   private readonly geocoding = inject(GeocodingService);
   private readonly snackBar = inject(MatSnackBar);
 
-  vehicle = this.store.selectSignal(selectSelectedVehicle);
-  vehicleLocation = this.store.selectSignal(selectSelectedVehicleLocation);
+  protected readonly vehicle = this.store.selectSignal(selectSelectedVehicle);
+  protected readonly vehicleLocation = this.store.selectSignal(selectSelectedVehicleLocation);
+  protected readonly imgError = signal(false);
 
-  imgError = signal(false);
+  protected readonly address = toSignal(
+    this.store.select(selectSelectedVehicleLocation).pipe(
+      switchMap((location) =>
+        location ? this.geocoding.reverseGeocode(location.lat, location.lon) : of(null),
+      ),
+    ),
+  );
 
-  close() {
+  close(): void {
     this.store.dispatch(VehicleDataActions.deselectVehicle());
   }
 
   copy(label: string, value: string | null | undefined): void {
     if (!value) return;
     navigator.clipboard.writeText(value).then(() => {
-      this.snackBar.open(`${label} copied to clipboard`, undefined, { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
+      this.snackBar.open(`${label} copied to clipboard`, undefined, {
+        duration: 2000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+      });
     });
   }
-
-  address = toSignal(
-    toObservable(this.store.selectSignal(selectSelectedVehicleLocation)).pipe(
-      switchMap((location) =>
-        location ? this.geocoding.reverseGeocode(location.lat, location.lon) : of(null),
-      ),
-    ),
-  );
 }
