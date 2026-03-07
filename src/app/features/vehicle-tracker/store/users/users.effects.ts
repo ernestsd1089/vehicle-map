@@ -15,7 +15,7 @@ export class UsersEffects {
       ofType(UsersActions.loadUsers),
       switchMap(() =>
         this.mobiService.getUsers().pipe(
-          map((users) => UsersActions.loadUsersSuccess({ users: users.filter((u) => !!u.userid) })),
+          map((users) => UsersActions.loadUsersSuccess({ users })),
           catchError((error: unknown) =>
             of(
               UsersActions.loadUsersFailure({
