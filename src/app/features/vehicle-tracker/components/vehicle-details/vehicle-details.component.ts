@@ -6,6 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { switchMap, of } from 'rxjs';
 import { Store } from '@ngrx/store';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
   selectSelectedVehicle,
@@ -22,22 +23,21 @@ import { GeocodingService } from '../../../../shared/services/geocoding.service'
 export class VehicleDetailsComponent {
   private readonly store = inject(Store);
   private readonly geocoding = inject(GeocodingService);
+  private readonly snackBar = inject(MatSnackBar);
 
   vehicle = this.store.selectSignal(selectSelectedVehicle);
   vehicleLocation = this.store.selectSignal(selectSelectedVehicleLocation);
 
-  copiedField = signal<string | null>(null);
   imgError = signal(false);
 
   close() {
     this.store.dispatch(VehicleDataActions.deselectVehicle());
   }
 
-  copy(field: string, value: string | null | undefined): void {
+  copy(label: string, value: string | null | undefined): void {
     if (!value) return;
     navigator.clipboard.writeText(value).then(() => {
-      this.copiedField.set(field);
-      setTimeout(() => this.copiedField.set(null), 2000);
+      this.snackBar.open(`${label} copied to clipboard`, undefined, { duration: 2000, horizontalPosition: 'right', verticalPosition: 'top' });
     });
   }
 
