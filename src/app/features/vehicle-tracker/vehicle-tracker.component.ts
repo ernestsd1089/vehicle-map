@@ -1,14 +1,14 @@
-import { Component, effect, inject, ViewChild } from '@angular/core';
-import { ListViewComponent } from './components/list-view/list-view.component';
-import { MobiService } from './services/mobi.service';
+import { Component, effect, inject, OnInit, viewChild } from '@angular/core';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Store } from '@ngrx/store';
-import { UsersActions } from './store/users/users.actions';
+
+import { ListViewComponent } from './components/list-view/list-view.component';
 import { MapViewComponent } from './components/map-view/map-view.component';
 import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-details.component';
 import { PanelComponent } from '../../shared/components/panel/panel.component';
+import { UsersActions } from './store/users/users.actions';
 import { VehicleDataFeature } from './store/vehicle-data/vehicle-data.reducer';
 
 @Component({
@@ -25,23 +25,22 @@ import { VehicleDataFeature } from './store/vehicle-data/vehicle-data.reducer';
     PanelComponent,
   ],
 })
-export class VehicleTrackerComponent {
-  @ViewChild('drawer') drawer!: MatDrawer;
+export class VehicleTrackerComponent implements OnInit {
+  private readonly drawer = viewChild.required<MatDrawer>('drawer');
 
-  mobiService = inject(MobiService);
-  store = inject(Store);
+  private readonly store = inject(Store);
 
-  selectedVehicleId = this.store.selectSignal(VehicleDataFeature.selectSelectedVehicleId);
+  protected readonly selectedVehicleId = this.store.selectSignal(
+    VehicleDataFeature.selectSelectedVehicleId,
+  );
 
   constructor() {
     effect(() => {
-      if (this.selectedVehicleId()) {
-        this.drawer?.open();
-      }
+      if (this.selectedVehicleId()) this.drawer().open();
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.store.dispatch(UsersActions.loadUsers());
   }
 }

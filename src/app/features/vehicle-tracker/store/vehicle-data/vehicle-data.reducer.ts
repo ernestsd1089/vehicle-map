@@ -56,6 +56,10 @@ export const selectVehiclesWithLocations = createSelector(
   },
 );
 
+export const selectLocatedVehicles = createSelector(selectVehiclesWithLocations, (vehicles) =>
+  vehicles.filter((v): v is typeof v & { location: NonNullable<(typeof v)['location']> } => v.location !== null),
+);
+
 export const selectSelectedVehicleLocation = createSelector(
   VehicleDataFeature.selectSelectedVehicleId,
   VehicleDataFeature.selectLocations,
