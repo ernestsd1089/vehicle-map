@@ -1,4 +1,5 @@
 export function isValidLocation(lat: number, lon: number): boolean {
+  if (typeof lat !== 'number' || typeof lon !== 'number') return false;
   return (
     isFinite(lat) &&
     isFinite(lon) &&
