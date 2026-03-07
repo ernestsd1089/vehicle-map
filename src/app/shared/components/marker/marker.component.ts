@@ -7,7 +7,7 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
   template: `
     @if (icon()) {
       <span
-        class="icon"
+        [class]="iconClass()"
         [style.mask]="iconMask()"
         [style.webkitMask]="iconMask()"
         [style.background-color]="iconColor()"
@@ -16,7 +16,8 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
   `,
   styleUrl: './marker.component.scss',
   host: {
-    class: 'marker',
+    class:
+      'relative flex items-center justify-center rounded-full cursor-pointer transition-[transform,box-shadow] duration-150 ease-in-out',
     '[class.selected]': 'selected()',
     '[class.sm]': 'size() === "sm"',
     '[style.background-color]': 'color()',
@@ -30,4 +31,5 @@ export class MarkerComponent {
 
   iconColor = computed(() => contrastColor(this.color()));
   iconMask = computed(() => `url('/icons/${this.icon()}.svg') center / contain no-repeat`);
+  iconClass = computed(() => `block ${this.size() === 'sm' ? 'w-4 h-4' : 'w-[1.4rem] h-[1.4rem]'}`);
 }

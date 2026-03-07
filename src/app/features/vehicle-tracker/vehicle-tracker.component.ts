@@ -14,7 +14,6 @@ import { VehicleDataFeature } from './store/vehicle-data/vehicle-data.reducer';
 @Component({
   selector: 'app-vehicle-tracker',
   templateUrl: './vehicle-tracker.component.html',
-  styleUrl: './vehicle-tracker.component.scss',
   imports: [
     MatSidenavModule,
     MatIconModule,
