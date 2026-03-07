@@ -1,5 +1,7 @@
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 
+import { isValidLocation } from '../../../../shared/utils/location.utils';
+
 import { UsersActions } from '../users/users.actions';
 import { UsersFeature } from '../users/users.reducer';
 import { VehicleDataActions } from './vehicle-data.actions';
@@ -46,7 +48,7 @@ export const selectVehiclesWithLocations = createSelector(
     if (!user) return [];
     return user.vehicles.map((vehicle) => ({
       ...vehicle,
-      location: locations[vehicle.vehicleid] ?? null,
+      location: isValidLocation(locations[vehicle.vehicleid]) ? locations[vehicle.vehicleid] : null,
     }));
   },
 );
