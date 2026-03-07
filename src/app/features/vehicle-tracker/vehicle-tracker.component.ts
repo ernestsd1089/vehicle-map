@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { UsersActions } from './store/users/users.actions';
 import { MapViewComponent } from './components/map-view/map-view.component';
 import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-details.component';
+import { PanelComponent } from '../../shared/components/panel/panel.component';
 import { VehicleDataFeature } from './store/vehicle-data/vehicle-data.reducer';
 
 @Component({
@@ -21,6 +22,7 @@ import { VehicleDataFeature } from './store/vehicle-data/vehicle-data.reducer';
     ListViewComponent,
     MapViewComponent,
     VehicleDetailsComponent,
+    PanelComponent,
   ],
 })
 export class VehicleTrackerComponent {
