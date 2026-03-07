@@ -19,7 +19,10 @@ import { boundingExtent } from 'ol/extent';
 import { fromLonLat } from 'ol/proj';
 import { defaults, Zoom } from 'ol/control';
 
-import { selectVehiclesWithLocations, VehicleDataFeature } from '../../store/vehicle-data/vehicle-data.reducer';
+import {
+  selectSelectedVehicleLocation,
+  selectVehiclesWithLocations,
+} from '../../store/vehicle-data/vehicle-data.reducer';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
 import { MarkerComponent } from '../../../../shared/components/marker/marker.component';
 
@@ -36,7 +39,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
   private map!: Map;
   private subscription!: Subscription;
   private selectedSub!: Subscription;
-  private markerRefs: ComponentRef<MarkerComponent>[] = [];
+  private markerRefs: Record<number, ComponentRef<MarkerComponent>> = {};
   private overlays: Overlay[] = [];
 
   ngAfterViewInit(): void {
@@ -52,16 +55,18 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
 
     this.map.on('click', () => {
       this.store.dispatch(VehicleDataActions.deselectVehicle());
-      this.markerRefs.forEach((r) => r.setInput('selected', false));
     });
 
-    this.selectedSub = this.store
-      .select(VehicleDataFeature.selectSelectedVehicleId)
-      .subscribe((selectedId) => {
-        if (!selectedId) {
-          this.markerRefs.forEach((r) => r.setInput('selected', false));
-        }
-      });
+    this.selectedSub = this.store.select(selectSelectedVehicleLocation).subscribe((location) => {
+      Object.values(this.markerRefs).forEach((r) => r.setInput('selected', false));
+      if (location) {
+        this.markerRefs[location.vehicleid]?.setInput('selected', true);
+        this.map.getView().animate({
+          center: fromLonLat([location.lon, location.lat]),
+          duration: 300,
+        });
+      }
+    });
 
     this.subscription = this.store.select(selectVehiclesWithLocations).subscribe((vehicles) => {
       this.clearMarkers();
@@ -77,8 +82,6 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
         el.addEventListener('click', (event) => {
           event.stopPropagation();
           this.store.dispatch(VehicleDataActions.selectVehicle({ vehicleId: v.vehicleid }));
-          this.markerRefs.forEach((r) => r.setInput('selected', false));
-          ref.setInput('selected', true);
         });
 
         const overlay = new Overlay({
@@ -90,21 +93,23 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
 
         this.map.addOverlay(overlay);
         this.overlays.push(overlay);
-        this.markerRefs.push(ref);
+        this.markerRefs[v.vehicleid] = ref;
       });
 
       if (located.length > 0) {
         const coords = located.map((v) => fromLonLat([v.location!.lon, v.location!.lat]));
-        this.map.getView().fit(boundingExtent(coords), { padding: [50, 50, 50, 50], maxZoom: 15 });
+        this.map
+          .getView()
+          .fit(boundingExtent(coords), { padding: [50, 50, 50, 50], maxZoom: 15, duration: 300 });
       }
     });
   }
 
   private clearMarkers(): void {
     this.overlays.forEach((o) => this.map.removeOverlay(o));
-    this.markerRefs.forEach((ref) => ref.destroy());
+    Object.values(this.markerRefs).forEach((ref) => ref.destroy());
     this.overlays = [];
-    this.markerRefs = [];
+    this.markerRefs = {};
   }
 
   ngOnDestroy(): void {

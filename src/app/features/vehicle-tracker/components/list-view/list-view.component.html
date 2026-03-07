@@ -17,7 +17,8 @@
             [activated]="selectedVehicleId() === vehicle.vehicleid"
             [disabled]="!vehicle.location"
             (click)="vehicle.location && selectVehicle(vehicle.vehicleid)"
-            class="cursor-pointer! pl-8!"
+            class="pl-8!"
+            [class.cursor-pointer]="vehicle.location"
           >
             <app-marker
               matListItemAvatar
