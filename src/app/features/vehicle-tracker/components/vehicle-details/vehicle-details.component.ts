@@ -27,6 +27,7 @@ export class VehicleDetailsComponent {
   vehicleLocation = this.store.selectSignal(selectSelectedVehicleLocation);
 
   copiedField = signal<string | null>(null);
+  imgError = signal(false);
 
   close() {
     this.store.dispatch(VehicleDataActions.deselectVehicle());
