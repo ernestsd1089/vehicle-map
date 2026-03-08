@@ -22,6 +22,7 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
       'relative flex items-center justify-center rounded-full cursor-pointer transition-[transform,box-shadow] duration-150 ease-in-out',
     '[class.selected]': 'selected()',
     '[class.sm]': 'size() === "sm"',
+    '[class.disabled]': 'disabled()',
     '[style.background-color]': 'color()',
   },
 })
@@ -30,6 +31,7 @@ export class MarkerComponent {
   icon = input<string>('');
   label = input<number | null>(null);
   selected = input<boolean>(false);
+  disabled = input<boolean>(false);
   size = input<'sm' | 'md'>('md');
 
   iconColor = computed(() => contrastColor(this.color()));
