@@ -11,7 +11,16 @@
         (click)="selectUser(user.userid)"
         class="cursor-pointer! hover:bg-black/5!"
       >
-        <img matListItemAvatar [src]="user.owner.foto" [alt]="user.owner.name" />
+        @if (user.owner.foto) {
+          <img matListItemAvatar [src]="user.owner.foto" [alt]="user.owner.name" />
+        } @else {
+          <div
+            matListItemAvatar
+            class="flex items-center justify-center rounded-full bg-gray-200 text-gray-600 text-sm font-semibold select-none"
+          >
+            {{ user.owner.name[0] }}{{ user.owner.surname[0] }}
+          </div>
+        }
         <span matListItemTitle>{{ user.owner.name }} {{ user.owner.surname }}</span>
         <span matListItemLine>{{ user.vehicles.length }} vehicle(s)</span>
         @if (selectedUserId() === user.userid && hasVehicleWithoutLocation()) {

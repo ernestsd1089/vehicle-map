@@ -96,5 +96,24 @@ describe('MarkerComponent', () => {
 
       expect(container).not.toHaveClass('sm');
     });
+
+    it('applies an inset border using the icon contrast color', async () => {
+      const { fixture } = await render(MarkerComponent, {
+        inputs: { color: '#000000' }, // dark → white icon/border
+      });
+
+      const host = fixture.nativeElement as HTMLElement;
+      expect(host.style.boxShadow).toContain('inset 0 0 0 2px white');
+    });
+
+    it('applies selected ring on top of the inset border when selected', async () => {
+      const { fixture } = await render(MarkerComponent, {
+        inputs: { color: '#ffffff', selected: true }, // light → black icon/border
+      });
+
+      const host = fixture.nativeElement as HTMLElement;
+      expect(host.style.boxShadow).toContain('inset 0 0 0 2px black');
+      expect(host.style.boxShadow).toContain('#1a73e8');
+    });
   });
 });

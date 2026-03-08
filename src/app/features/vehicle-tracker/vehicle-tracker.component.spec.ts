@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/angular';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import { VehicleTrackerComponent } from './vehicle-tracker.component';
 import { VehicleDataFeature, selectSelectedVehicle, selectSelectedVehicleLocation, selectVehiclesWithLocations } from './store/vehicle-data/vehicle-data.reducer';
@@ -34,9 +35,23 @@ const baseSelectors = [
   { selector: selectSelectedVehicleLocation, value: null },
 ];
 
+const desktopBreakpoint = { provide: BreakpointObserver, useValue: { observe: jest.fn().mockReturnValue(of({ matches: false })) } };
+const mobileBreakpoint = { provide: BreakpointObserver, useValue: { observe: jest.fn().mockReturnValue(of({ matches: true })) } };
+
 const baseProviders = [
   { provide: GeocodingService, useValue: { reverseGeocode: jest.fn().mockReturnValue(of(null)) } },
   { provide: MatSnackBar, useValue: { open: jest.fn() } },
+  desktopBreakpoint,
+];
+
+const mockVehicle = { vehicleid: 1, make: 'Toyota', model: 'Camry', year: '2020', color: '#ff0000', foto: '', vin: 'V1' };
+const selectorsWithVehicle = [
+  ...baseSelectors.filter(s =>
+    s.selector !== VehicleDataFeature.selectSelectedVehicleId &&
+    s.selector !== selectSelectedVehicle
+  ),
+  { selector: VehicleDataFeature.selectSelectedVehicleId, value: 1 },
+  { selector: selectSelectedVehicle, value: mockVehicle },
 ];
 
 describe('VehicleTrackerComponent', () => {
@@ -56,23 +71,45 @@ describe('VehicleTrackerComponent', () => {
     });
   });
 
-  describe('vehicle details panel', () => {
-    it('shows the vehicle details panel when a vehicle is selected', async () => {
-      const mockVehicle = { vehicleid: 1, make: 'Toyota', model: 'Camry', year: '2020', color: '#ff0000', foto: '', vin: 'V1' };
+  describe('toggle button', () => {
+
+    it('shows the toggle button when no vehicle is selected', async () => {
+      await render(VehicleTrackerComponent, {
+        providers: [provideMockStore({ selectors: baseSelectors }), ...baseProviders],
+      });
+
+      expect(screen.getByRole('button', { name: /sidebar/i })).toBeInTheDocument();
+    });
+
+    it('hides the toggle button on desktop when a vehicle is selected', async () => {
       await render(VehicleTrackerComponent, {
         providers: [
-          provideMockStore({
-            selectors: [
-              ...baseSelectors.filter(s =>
-                s.selector !== VehicleDataFeature.selectSelectedVehicleId &&
-                s.selector !== selectSelectedVehicle
-              ),
-              { selector: VehicleDataFeature.selectSelectedVehicleId, value: 1 },
-              { selector: selectSelectedVehicle, value: mockVehicle },
-            ],
-          }),
+          provideMockStore({ selectors: selectorsWithVehicle }),
           ...baseProviders,
         ],
+      });
+
+      expect(screen.queryByRole('button', { name: /sidebar/i })).not.toBeInTheDocument();
+    });
+
+    it('shows the toggle button on mobile even when a vehicle is selected', async () => {
+      await render(VehicleTrackerComponent, {
+        providers: [
+          provideMockStore({ selectors: selectorsWithVehicle }),
+          { provide: GeocodingService, useValue: { reverseGeocode: jest.fn().mockReturnValue(of(null)) } },
+          { provide: MatSnackBar, useValue: { open: jest.fn() } },
+          mobileBreakpoint,
+        ],
+      });
+
+      expect(screen.getByRole('button', { name: /sidebar/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('vehicle details panel', () => {
+    it('shows the vehicle details panel when a vehicle is selected', async () => {
+      await render(VehicleTrackerComponent, {
+        providers: [provideMockStore({ selectors: selectorsWithVehicle }), ...baseProviders],
       });
 
       expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
@@ -80,13 +117,35 @@ describe('VehicleTrackerComponent', () => {
 
     it('hides the vehicle details panel when no vehicle is selected', async () => {
       await render(VehicleTrackerComponent, {
-        providers: [
-          provideMockStore({ selectors: baseSelectors }),
-          ...baseProviders,
-        ],
+        providers: [provideMockStore({ selectors: baseSelectors }), ...baseProviders],
       });
 
       expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('responsive layout', () => {
+    it('shows app-vehicle-details and not the sheet on desktop when a vehicle is selected', async () => {
+      const { container } = await render(VehicleTrackerComponent, {
+        providers: [provideMockStore({ selectors: selectorsWithVehicle }), ...baseProviders],
+      });
+
+      expect(container.querySelector('app-vehicle-details')).toBeInTheDocument();
+      expect(container.querySelector('app-vehicle-details-sheet')).not.toBeInTheDocument();
+    });
+
+    it('shows app-vehicle-details-sheet and not the panel on mobile when a vehicle is selected', async () => {
+      const { container } = await render(VehicleTrackerComponent, {
+        providers: [
+          provideMockStore({ selectors: selectorsWithVehicle }),
+          { provide: GeocodingService, useValue: { reverseGeocode: jest.fn().mockReturnValue(of(null)) } },
+          { provide: MatSnackBar, useValue: { open: jest.fn() } },
+          mobileBreakpoint,
+        ],
+      });
+
+      expect(container.querySelector('app-vehicle-details-sheet')).toBeInTheDocument();
+      expect(container.querySelector('app-vehicle-details')).not.toBeInTheDocument();
     });
   });
 });
