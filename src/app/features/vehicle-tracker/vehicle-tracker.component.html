@@ -12,9 +12,9 @@
   </mat-drawer>
   <mat-drawer-content class="relative overflow-y-hidden!">
     <button
-      mat-icon-button
+      mat-fab
       (click)="toggleDrawer()"
-      class="absolute! top-1/2 -translate-y-1/2 z-20!"
+      class="absolute! top-1/2 -translate-y-1/2 z-20! shadow-lg! bg-white! text-gray-700! ml-2"
     >
       <mat-icon>{{ drawerOpen() ? 'chevron_left' : 'chevron_right' }}</mat-icon>
     </button>
