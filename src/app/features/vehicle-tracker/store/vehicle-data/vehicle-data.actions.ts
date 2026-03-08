@@ -10,5 +10,8 @@ export const VehicleDataActions = createActionGroup({
     'retrying load locations': props<{ attempt: number; retryIn: number }>(),
     'select vehicle': props<{ vehicleId: number }>(),
     'deselect vehicle': emptyProps(),
+    'retry locations': props<{ userId: number }>(),
+    'retry locations succeeded': emptyProps(),
+    'manual retry locations failed': emptyProps(),
   },
 });

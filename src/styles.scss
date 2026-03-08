@@ -78,3 +78,16 @@ body {
     color: white !important;
   }
 }
+
+.snackbar-success {
+  --mdc-snackbar-container-color: #388e3c;
+  --mdc-snackbar-supporting-text-color: white;
+
+  .mdc-snackbar__surface {
+    background-color: #388e3c !important;
+  }
+
+  .mdc-snackbar__label {
+    color: white !important;
+  }
+}

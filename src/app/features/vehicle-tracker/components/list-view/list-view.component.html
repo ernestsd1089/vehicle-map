@@ -9,20 +9,30 @@
       <mat-list-item
         [activated]="selectedUserId() === user.userid"
         (click)="selectUser(user.userid)"
-        class="cursor-pointer!"
+        class="cursor-pointer! hover:bg-black/5!"
       >
         <img matListItemAvatar [src]="user.owner.foto" [alt]="user.owner.name" />
         <span matListItemTitle>{{ user.owner.name }} {{ user.owner.surname }}</span>
         <span matListItemLine>{{ user.vehicles.length }} vehicle(s)</span>
+        @if (selectedUserId() === user.userid && hasVehicleWithoutLocation()) {
+          <button
+            matListItemMeta
+            class="self-center text-xs text-primary cursor-pointer border-0 bg-transparent leading-none p-1 disabled:opacity-50 disabled:cursor-default"
+            [disabled]="retryCountdown() > 0"
+            (click)="$event.stopPropagation(); retryLocations(user.userid)"
+          >
+            {{ retryCountdown() > 0 ? 'Retry in ' + retryCountdown() + 's' : 'Retry' }}
+          </button>
+        }
       </mat-list-item>
 
       @if (selectedUserId() === user.userid) {
         @for (vehicle of vehiclesWithLocations(); track vehicle.vehicleid) {
           <mat-list-item
             [activated]="selectedVehicleId() === vehicle.vehicleid"
-            [disabled]="!vehicle.location"
             (click)="vehicle.location && selectVehicle(vehicle.vehicleid)"
             class="pl-8!"
+            [disabled]="!vehicle.location"
             [class.cursor-pointer]="vehicle.location"
           >
             <app-marker
@@ -31,6 +41,7 @@
               icon="car"
               [color]="vehicle.color"
               [selected]="selectedVehicleId() === vehicle.vehicleid"
+              [disabled]="!vehicle.location"
             />
             <span matListItemTitle class="text-sm!"
               >{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</span

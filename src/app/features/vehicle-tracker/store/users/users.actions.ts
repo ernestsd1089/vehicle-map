@@ -9,6 +9,7 @@ export const UsersActions = createActionGroup({
     'load users success': props<{ users: User[] }>(),
     'load users failure': props<{ error: string }>(),
     'retrying load users': props<{ attempt: number; retryIn: number }>(),
+    'retry load users succeeded': emptyProps(),
     'select user': props<{ userId: number }>(),
   },
 });
