@@ -7,7 +7,6 @@ import { UsersActions } from '../../features/vehicle-tracker/store/users/users.a
 import { VehicleDataActions } from '../../features/vehicle-tracker/store/vehicle-data/vehicle-data.actions';
 
 const SNACKBAR_CONFIG = {
-  duration: 5000,
   horizontalPosition: 'right' as const,
   verticalPosition: 'top' as const,
   panelClass: 'snackbar-error',
@@ -18,11 +17,16 @@ export class NotificationEffects {
   private readonly actions$ = inject(Actions);
   private readonly snackBar = inject(MatSnackBar);
 
-  onFailure$ = createEffect(
+  onRetrying$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(UsersActions.loadUsersFailure, VehicleDataActions.loadLocationsFailure),
-        tap(({ error }) => this.snackBar.open(error, undefined, SNACKBAR_CONFIG)),
+        ofType(UsersActions.retryingLoadUsers, VehicleDataActions.retryingLoadLocations),
+        tap(({ retryIn }) =>
+          this.snackBar.open(`Failed to load data. Retrying in ${retryIn}s...`, undefined, {
+            ...SNACKBAR_CONFIG,
+            duration: 1000,
+          }),
+        ),
       ),
     { dispatch: false },
   );

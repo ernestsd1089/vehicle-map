@@ -7,6 +7,7 @@ export const VehicleDataActions = createActionGroup({
   events: {
     'load locations success': props<{ locations: VehicleLocation[] }>(),
     'load locations failure': props<{ error: string }>(),
+    'retrying load locations': props<{ attempt: number; retryIn: number }>(),
     'select vehicle': props<{ vehicleId: number }>(),
     'deselect vehicle': emptyProps(),
   },
