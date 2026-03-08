@@ -1,10 +1,10 @@
 @let location = vehicleLocation();
 
 @if (vehicle(); as v) {
-  <div class="flex flex-col w-96">
+  <div class="flex flex-col w-72 xl:w-96 max-h-screen-inset overflow-y-auto">
     <div class="relative">
       @if (imgError()) {
-        <div class="w-full h-40 bg-gray-100 flex items-center justify-center">
+        <div class="w-full h-28 xl:h-40 bg-gray-100 flex items-center justify-center">
           <mat-icon class="text-gray-300 text-7xl! w-auto! h-auto!">directions_car</mat-icon>
         </div>
       }

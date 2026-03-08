@@ -40,6 +40,10 @@ body {
   height: 100%;
 }
 
+@utility max-h-screen-inset {
+  max-height: calc(100dvh - 2rem);
+}
+
 .ol-zoom {
   bottom: 2.5rem;
   right: 1rem;
