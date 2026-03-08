@@ -6,10 +6,14 @@ import { tap } from 'rxjs';
 import { UsersActions } from '../../features/vehicle-tracker/store/users/users.actions';
 import { VehicleDataActions } from '../../features/vehicle-tracker/store/vehicle-data/vehicle-data.actions';
 
-const SNACKBAR_CONFIG = {
+const BASE_CONFIG = {
   horizontalPosition: 'right' as const,
   verticalPosition: 'top' as const,
-  panelClass: 'snackbar-error',
+};
+
+const SUCCESS_MESSAGE: Record<string, string> = {
+  [UsersActions.retryLoadUsersSucceeded.type]: 'User list loaded successfully.',
+  [VehicleDataActions.retryLocationsSucceeded.type]: 'Vehicle locations loaded successfully.',
 };
 
 @Injectable()
@@ -23,8 +27,24 @@ export class NotificationEffects {
         ofType(UsersActions.retryingLoadUsers, VehicleDataActions.retryingLoadLocations),
         tap(({ retryIn }) =>
           this.snackBar.open(`Failed to load data. Retrying in ${retryIn}s...`, undefined, {
-            ...SNACKBAR_CONFIG,
+            ...BASE_CONFIG,
+            panelClass: 'snackbar-error',
             duration: 1000,
+          }),
+        ),
+      ),
+    { dispatch: false },
+  );
+
+  onRetrySucceeded$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(UsersActions.retryLoadUsersSucceeded, VehicleDataActions.retryLocationsSucceeded),
+        tap(({ type }) =>
+          this.snackBar.open(SUCCESS_MESSAGE[type], undefined, {
+            ...BASE_CONFIG,
+            panelClass: 'snackbar-success',
+            duration: 3000,
           }),
         ),
       ),

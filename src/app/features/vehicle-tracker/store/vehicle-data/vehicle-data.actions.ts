@@ -11,5 +11,6 @@ export const VehicleDataActions = createActionGroup({
     'select vehicle': props<{ vehicleId: number }>(),
     'deselect vehicle': emptyProps(),
     'retry locations': props<{ userId: number }>(),
+    'retry locations succeeded': emptyProps(),
   },
 });
