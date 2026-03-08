@@ -1,5 +1,11 @@
 <mat-drawer-container class="h-screen">
-  <mat-drawer #drawer opened mode="side" class="overflow-hidden w-70 md:w-95 lg:w-100">
+  <mat-drawer
+    [opened]="drawerOpen()"
+    (openedChange)="drawerOpen.set($event)"
+    [mode]="isMobile() ? 'over' : 'side'"
+    class="overflow-hidden w-70 md:w-95 lg:w-100"
+    [style.width]="isMobile() ? '100%' : null"
+  >
     <div class="bg-white h-screen p-4 rounded-4xl">
       <app-list-view />
     </div>
@@ -7,16 +13,22 @@
   <mat-drawer-content class="relative overflow-y-hidden!">
     <button
       mat-icon-button
-      (click)="drawer.toggle()"
+      (click)="toggleDrawer()"
       class="absolute! top-1/2 -translate-y-1/2 z-20!"
     >
-      <mat-icon>{{ drawer.opened ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+      <mat-icon>{{ drawerOpen() ? 'chevron_left' : 'chevron_right' }}</mat-icon>
     </button>
 
-    @if (selectedVehicleId()) {
+    @if (selectedVehicleId() && !isMobile()) {
       <app-panel class="absolute m-4 z-50">
         <app-vehicle-details />
       </app-panel>
+    } @else if (selectedVehicleId() && isMobile()) {
+      <div
+        class="absolute bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-xl max-h-[30vh] overflow-hidden"
+      >
+        <app-vehicle-details-sheet />
+      </div>
     }
 
     <app-map-view />
