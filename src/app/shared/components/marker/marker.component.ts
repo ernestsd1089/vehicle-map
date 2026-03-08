@@ -24,6 +24,7 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
     '[class.sm]': 'size() === "sm"',
     '[class.disabled]': 'disabled()',
     '[style.background-color]': 'color()',
+    '[style.box-shadow]': 'hostShadow()',
   },
 })
 export class MarkerComponent {
@@ -37,4 +38,11 @@ export class MarkerComponent {
   iconColor = computed(() => contrastColor(this.color()));
   iconMask = computed(() => `url('/icons/${this.icon()}.svg') center / contain no-repeat`);
   iconClass = computed(() => `block ${this.size() === 'sm' ? 'w-4 h-4' : 'w-[1.4rem] h-[1.4rem]'}`);
+  hostShadow = computed(() => {
+    const border = `inset 0 0 0 2px ${this.iconColor()}`;
+    if (this.selected()) {
+      return `${border}, 0 0 0 2px white, 0 0 0 4px #1a73e8, 0 4px 12px rgba(0,0,0,0.3)`;
+    }
+    return `${border}, 0 2px 6px rgba(0,0,0,0.3)`;
+  });
 }
