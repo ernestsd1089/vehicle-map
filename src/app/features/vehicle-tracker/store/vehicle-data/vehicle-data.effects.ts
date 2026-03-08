@@ -62,9 +62,29 @@ export class VehicleDataEffects {
     this.actions$.pipe(
       ofType(UsersActions.selectUser),
       switchMap(({ userId }) =>
-        timer(0, 60_000).pipe(
-          switchMap(() =>
-            this.mobiService.getLocations(userId).pipe(
+        this.mobiService.getLocations(userId).pipe(
+          retryWithCountdown(this.store, VehicleDataActions.retryingLoadLocations),
+          map((locations) => VehicleDataActions.loadLocationsSuccess({ locations })),
+          catchError((error: unknown) =>
+            of(
+              VehicleDataActions.loadLocationsFailure({
+                error: error instanceof Error ? error.message : 'Failed to load locations',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  periodicLocationReload$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UsersActions.selectUser),
+      switchMap(({ userId }) =>
+        timer(60_000, 60_000).pipe(
+          switchMap(() => {
+            this.cache.delete(`${LOCATIONS_KEY}-${userId}`);
+            return this.mobiService.getLocations(userId).pipe(
               retryWithCountdown(this.store, VehicleDataActions.retryingLoadLocations),
               map((locations) => VehicleDataActions.loadLocationsSuccess({ locations })),
               catchError((error: unknown) =>
@@ -74,8 +94,8 @@ export class VehicleDataEffects {
                   }),
                 ),
               ),
-            ),
-          ),
+            );
+          }),
         ),
       ),
     ),

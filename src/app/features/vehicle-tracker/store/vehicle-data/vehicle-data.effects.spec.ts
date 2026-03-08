@@ -139,7 +139,6 @@ describe('VehicleDataEffects', () => {
       });
 
       actions$.next(UsersActions.selectUser({ userId: 3 }));
-      jest.advanceTimersByTime(0);
     });
 
     it('calls getLocations with the selected userId', (done) => {
@@ -151,7 +150,81 @@ describe('VehicleDataEffects', () => {
       });
 
       actions$.next(UsersActions.selectUser({ userId: 3 }));
-      jest.advanceTimersByTime(0);
+    });
+
+    it('does not delete the cache', (done) => {
+      getLocations.mockReturnValue(of([]));
+
+      effects.loadLocationsOnUserSelect$.subscribe(() => {
+        expect(cacheDelete).not.toHaveBeenCalled();
+        done();
+      });
+
+      actions$.next(UsersActions.selectUser({ userId: 3 }));
+    });
+  });
+
+  describe('periodicLocationReload$', () => {
+    it('does not fire immediately on selectUser', () => {
+      getLocations.mockReturnValue(of([mockLocation]));
+
+      const dispatched: Action[] = [];
+      effects.periodicLocationReload$.subscribe((a) => dispatched.push(a));
+
+      actions$.next(UsersActions.selectUser({ userId: 3 }));
+
+      expect(dispatched).toHaveLength(0);
+    });
+
+    it('fires after 60 seconds and dispatches loadLocationsSuccess', (done) => {
+      getLocations.mockReturnValue(of([mockLocation]));
+
+      effects.periodicLocationReload$.subscribe((action) => {
+        expect(action).toEqual(VehicleDataActions.loadLocationsSuccess({ locations: [mockLocation] }));
+        done();
+      });
+
+      actions$.next(UsersActions.selectUser({ userId: 3 }));
+      jest.advanceTimersByTime(60_000);
+    });
+
+    it('deletes the cache before fetching', (done) => {
+      getLocations.mockReturnValue(of([]));
+
+      effects.periodicLocationReload$.subscribe(() => {
+        expect(cacheDelete).toHaveBeenCalledWith(`${LOCATIONS_KEY}-3`);
+        done();
+      });
+
+      actions$.next(UsersActions.selectUser({ userId: 3 }));
+      jest.advanceTimersByTime(60_000);
+    });
+
+    it('calls getLocations with the selected userId', (done) => {
+      getLocations.mockReturnValue(of([]));
+
+      effects.periodicLocationReload$.subscribe(() => {
+        expect(getLocations).toHaveBeenCalledWith(3);
+        done();
+      });
+
+      actions$.next(UsersActions.selectUser({ userId: 3 }));
+      jest.advanceTimersByTime(60_000);
+    });
+
+    it('cancels the previous timer when a new user is selected', () => {
+      getLocations.mockReturnValue(of([mockLocation]));
+
+      const dispatched: Action[] = [];
+      effects.periodicLocationReload$.subscribe((a) => dispatched.push(a));
+
+      actions$.next(UsersActions.selectUser({ userId: 1 }));
+      actions$.next(UsersActions.selectUser({ userId: 2 }));
+      jest.advanceTimersByTime(60_000);
+
+      expect(dispatched).toHaveLength(1);
+      expect(getLocations).toHaveBeenCalledWith(2);
+      expect(getLocations).not.toHaveBeenCalledWith(1);
     });
   });
 });
