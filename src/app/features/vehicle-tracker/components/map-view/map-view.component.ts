@@ -82,6 +82,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
         this.clusterManager.clear();
         this.markerManager.clear();
         vehicles.forEach((v) => this.markerManager.add(v.vehicleid, v.color, v.location));
+        this.clusterManager.update(this.markerManager.getMarkers());
         this.panToVehicles(vehicles.map((v) => v.location));
       });
   }
