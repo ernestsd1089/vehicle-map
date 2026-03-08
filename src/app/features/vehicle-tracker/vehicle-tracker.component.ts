@@ -10,6 +10,7 @@ import { Store } from '@ngrx/store';
 import { ListViewComponent } from './components/list-view/list-view.component';
 import { MapViewComponent } from './components/map-view/map-view.component';
 import { VehicleDetailsComponent } from './components/vehicle-details/vehicle-details.component';
+import { VehicleDetailsSheetComponent } from './components/vehicle-details-sheet/vehicle-details-sheet.component';
 import { PanelComponent } from '../../shared/components/panel/panel.component';
 import { UsersActions } from './store/users/users.actions';
 import { UsersFeature } from './store/users/users.reducer';
@@ -25,6 +26,7 @@ import { VehicleDataFeature } from './store/vehicle-data/vehicle-data.reducer';
     ListViewComponent,
     MapViewComponent,
     VehicleDetailsComponent,
+    VehicleDetailsSheetComponent,
     PanelComponent,
   ],
 })

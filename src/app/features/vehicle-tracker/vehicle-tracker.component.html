@@ -19,10 +19,16 @@
       <mat-icon>{{ drawerOpen() ? 'chevron_left' : 'chevron_right' }}</mat-icon>
     </button>
 
-    @if (selectedVehicleId()) {
+    @if (selectedVehicleId() && !isMobile()) {
       <app-panel class="absolute m-4 z-50">
         <app-vehicle-details />
       </app-panel>
+    } @else if (selectedVehicleId() && isMobile()) {
+      <div
+        class="absolute bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-xl max-h-[30vh] overflow-hidden"
+      >
+        <app-vehicle-details-sheet />
+      </div>
     }
 
     <app-map-view />
