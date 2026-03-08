@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,14 +17,28 @@ import { User } from '../../models/user.model';
   imports: [MatListModule, MatFormFieldModule, MatInputModule, FormsModule, MarkerComponent],
 })
 export class ListViewComponent {
-  store = inject(Store);
+  private readonly store = inject(Store);
+  private readonly destroyRef = inject(DestroyRef);
 
   users = this.store.selectSignal(UsersFeature.selectUsers);
   selectedUserId = this.store.selectSignal(UsersFeature.selectSelectedUserId);
   selectedVehicleId = this.store.selectSignal(VehicleDataFeature.selectSelectedVehicleId);
   vehiclesWithLocations = this.store.selectSignal(selectVehiclesWithLocations);
+  locationsLoading = this.store.selectSignal(VehicleDataFeature.selectLoading);
 
   searchQuery = signal('');
+  retryCountdown = signal(0);
+
+  private retryAttempt = 0;
+  private retryTimer: ReturnType<typeof setInterval> | null = null;
+
+  constructor() {
+    this.destroyRef.onDestroy(() => this.resetRetry());
+  }
+
+  hasVehicleWithoutLocation = computed(() =>
+    !this.locationsLoading() && this.vehiclesWithLocations().some((v) => !v.location),
+  );
 
   filteredUsers = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
@@ -41,10 +55,38 @@ export class ListViewComponent {
   }
 
   selectUser(userId: number) {
+    if (this.selectedUserId() === userId && this.retryCountdown() > 0) return;
     this.store.dispatch(UsersActions.selectUser({ userId }));
   }
 
   selectVehicle(vehicleId: number) {
     this.store.dispatch(VehicleDataActions.selectVehicle({ vehicleId }));
+  }
+
+  retryLocations(userId: number) {
+    this.retryAttempt++;
+    const seconds = this.retryAttempt * 2;
+    this.retryCountdown.set(seconds);
+
+    if (this.retryTimer) clearInterval(this.retryTimer);
+    this.retryTimer = setInterval(() => {
+      const remaining = this.retryCountdown() - 1;
+      this.retryCountdown.set(remaining);
+      if (remaining <= 0) {
+        clearInterval(this.retryTimer!);
+        this.retryTimer = null;
+      }
+    }, 1000);
+
+    this.store.dispatch(VehicleDataActions.retryLocations({ userId }));
+  }
+
+  private resetRetry() {
+    this.retryAttempt = 0;
+    this.retryCountdown.set(0);
+    if (this.retryTimer) {
+      clearInterval(this.retryTimer);
+      this.retryTimer = null;
+    }
   }
 }

@@ -9,7 +9,7 @@ import { User } from '../models/user.model';
 const USERS_TTL = 5 * 60 * 1000;
 const LOCATIONS_TTL = 30 * 1000;
 const USERS_KEY = 'users';
-const LOCATIONS_KEY = 'locations';
+export const LOCATIONS_KEY = 'locations';
 
 @Injectable({ providedIn: 'root' })
 export class MobiService {
