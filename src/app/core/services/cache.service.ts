@@ -13,4 +13,8 @@ export class CacheService {
   set(key: string, data: unknown): void {
     this.entries.set(key, { data, timestamp: Date.now() });
   }
+
+  delete(key: string): void {
+    this.entries.delete(key);
+  }
 }
