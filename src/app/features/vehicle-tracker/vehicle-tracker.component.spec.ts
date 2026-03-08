@@ -44,6 +44,16 @@ const baseProviders = [
   desktopBreakpoint,
 ];
 
+const mockVehicle = { vehicleid: 1, make: 'Toyota', model: 'Camry', year: '2020', color: '#ff0000', foto: '', vin: 'V1' };
+const selectorsWithVehicle = [
+  ...baseSelectors.filter(s =>
+    s.selector !== VehicleDataFeature.selectSelectedVehicleId &&
+    s.selector !== selectSelectedVehicle
+  ),
+  { selector: VehicleDataFeature.selectSelectedVehicleId, value: 1 },
+  { selector: selectSelectedVehicle, value: mockVehicle },
+];
+
 describe('VehicleTrackerComponent', () => {
   describe('initialisation', () => {
     it('dispatches loadUsers on init', async () => {
@@ -62,15 +72,6 @@ describe('VehicleTrackerComponent', () => {
   });
 
   describe('toggle button', () => {
-    const mockVehicle = { vehicleid: 1, make: 'Toyota', model: 'Camry', year: '2020', color: '#ff0000', foto: '', vin: 'V1' };
-    const selectorsWithVehicle = [
-      ...baseSelectors.filter(s =>
-        s.selector !== VehicleDataFeature.selectSelectedVehicleId &&
-        s.selector !== selectSelectedVehicle
-      ),
-      { selector: VehicleDataFeature.selectSelectedVehicleId, value: 1 },
-      { selector: selectSelectedVehicle, value: mockVehicle },
-    ];
 
     it('shows the toggle button when no vehicle is selected', async () => {
       await render(VehicleTrackerComponent, {
@@ -107,21 +108,8 @@ describe('VehicleTrackerComponent', () => {
 
   describe('vehicle details panel', () => {
     it('shows the vehicle details panel when a vehicle is selected', async () => {
-      const mockVehicle = { vehicleid: 1, make: 'Toyota', model: 'Camry', year: '2020', color: '#ff0000', foto: '', vin: 'V1' };
       await render(VehicleTrackerComponent, {
-        providers: [
-          provideMockStore({
-            selectors: [
-              ...baseSelectors.filter(s =>
-                s.selector !== VehicleDataFeature.selectSelectedVehicleId &&
-                s.selector !== selectSelectedVehicle
-              ),
-              { selector: VehicleDataFeature.selectSelectedVehicleId, value: 1 },
-              { selector: selectSelectedVehicle, value: mockVehicle },
-            ],
-          }),
-          ...baseProviders,
-        ],
+        providers: [provideMockStore({ selectors: selectorsWithVehicle }), ...baseProviders],
       });
 
       expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
@@ -129,13 +117,35 @@ describe('VehicleTrackerComponent', () => {
 
     it('hides the vehicle details panel when no vehicle is selected', async () => {
       await render(VehicleTrackerComponent, {
-        providers: [
-          provideMockStore({ selectors: baseSelectors }),
-          ...baseProviders,
-        ],
+        providers: [provideMockStore({ selectors: baseSelectors }), ...baseProviders],
       });
 
       expect(screen.queryByRole('heading', { level: 3 })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('responsive layout', () => {
+    it('shows app-vehicle-details and not the sheet on desktop when a vehicle is selected', async () => {
+      const { container } = await render(VehicleTrackerComponent, {
+        providers: [provideMockStore({ selectors: selectorsWithVehicle }), ...baseProviders],
+      });
+
+      expect(container.querySelector('app-vehicle-details')).toBeInTheDocument();
+      expect(container.querySelector('app-vehicle-details-sheet')).not.toBeInTheDocument();
+    });
+
+    it('shows app-vehicle-details-sheet and not the panel on mobile when a vehicle is selected', async () => {
+      const { container } = await render(VehicleTrackerComponent, {
+        providers: [
+          provideMockStore({ selectors: selectorsWithVehicle }),
+          { provide: GeocodingService, useValue: { reverseGeocode: jest.fn().mockReturnValue(of(null)) } },
+          { provide: MatSnackBar, useValue: { open: jest.fn() } },
+          mobileBreakpoint,
+        ],
+      });
+
+      expect(container.querySelector('app-vehicle-details-sheet')).toBeInTheDocument();
+      expect(container.querySelector('app-vehicle-details')).not.toBeInTheDocument();
     });
   });
 });
