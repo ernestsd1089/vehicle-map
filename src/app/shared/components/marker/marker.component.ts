@@ -12,6 +12,8 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
         [style.webkitMask]="iconMask()"
         [style.background-color]="iconColor()"
       ></span>
+    } @else if (label() !== null) {
+      <span class="text-base font-bold" [style.color]="iconColor()">{{ label() }}</span>
     }
   `,
   styleUrl: './marker.component.scss',
@@ -26,6 +28,7 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
 export class MarkerComponent {
   color = input<string>(AZURE_BLUE);
   icon = input<string>('');
+  label = input<number | null>(null);
   selected = input<boolean>(false);
   size = input<'sm' | 'md'>('md');
 
