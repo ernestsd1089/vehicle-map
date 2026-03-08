@@ -29,6 +29,8 @@ import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.action
 import { MapMarkerManager } from './map-marker.manager';
 import { MapClusterManager } from './map-cluster.manager';
 
+export const VEHICLE_SELECT_ZOOM = 18;
+
 @Component({
   selector: 'app-map-view',
   templateUrl: './map-view.component.html',
@@ -70,7 +72,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((location) => {
         this.markerManager.updateSelection(location?.vehicleid ?? null);
-        if (location) this.panToPoint(location.lon, location.lat, 16);
+        if (location) this.panToPoint(location.lon, location.lat, VEHICLE_SELECT_ZOOM);
       });
 
     this.store

@@ -13,7 +13,7 @@ import { AZURE_BLUE } from '../../tokens/design-tokens';
         [style.background-color]="iconColor()"
       ></span>
     } @else if (label() !== null) {
-      <span class="text-sm font-bold" [style.color]="iconColor()">{{ label() }}</span>
+      <span class="text-base font-bold" [style.color]="iconColor()">{{ label() }}</span>
     }
   `,
   styleUrl: './marker.component.scss',

@@ -8,6 +8,7 @@ import { boundingExtent } from 'ol/extent';
 
 import { MarkerComponent } from '../../../../shared/components/marker/marker.component';
 import { MarkerEntry } from './map-marker.manager';
+import { VEHICLE_SELECT_ZOOM } from './map-view.component';
 
 export class MapClusterManager {
   private clusterOverlays: { overlay: Overlay; ref: ComponentRef<MarkerComponent> }[] = [];
@@ -53,10 +54,17 @@ export class MapClusterManager {
     el.addEventListener('click', (event) => {
       event.stopPropagation();
       const coords = features.map((f) => (f.getGeometry() as Point).getCoordinates());
-      this.map.getView().fit(boundingExtent(coords), { padding: [50, 50, 50, 50], maxZoom: 15, duration: 300 });
+      this.map
+        .getView()
+        .fit(boundingExtent(coords), { padding: [100, 100, 100, 100], maxZoom: VEHICLE_SELECT_ZOOM, duration: 300 });
     });
 
-    const overlay = new Overlay({ position, positioning: 'center-center', element: el, stopEvent: false });
+    const overlay = new Overlay({
+      position,
+      positioning: 'center-center',
+      element: el,
+      stopEvent: false,
+    });
     this.map.addOverlay(overlay);
     this.clusterOverlays.push({ ref, overlay });
   }
