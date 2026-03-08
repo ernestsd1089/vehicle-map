@@ -50,4 +50,19 @@ export class NotificationEffects {
       ),
     { dispatch: false },
   );
+
+  onRetryFailed$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(VehicleDataActions.manualRetryLocationsFailed),
+        tap(() =>
+          this.snackBar.open('Some vehicle locations could not be retrieved.', undefined, {
+            ...BASE_CONFIG,
+            panelClass: 'snackbar-error',
+            duration: 3000,
+          }),
+        ),
+      ),
+    { dispatch: false },
+  );
 }

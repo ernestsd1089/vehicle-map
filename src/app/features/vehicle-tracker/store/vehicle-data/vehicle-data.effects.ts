@@ -41,16 +41,20 @@ export class VehicleDataEffects {
   onLocationResult$ = createEffect(() =>
     this.actions$.pipe(
       ofType(VehicleDataActions.loadLocationsSuccess, VehicleDataActions.loadLocationsFailure),
-      filter(({ type }) => {
+      filter(() => {
         const wasRetrying = this.locationRetryPending;
         this.locationRetryPending = false;
-        return wasRetrying && type === VehicleDataActions.loadLocationsSuccess.type;
+        return wasRetrying;
       }),
       withLatestFrom(this.store.select(selectVehiclesWithLocations)),
-      filter(([, vehiclesWithLocations]) =>
-        vehiclesWithLocations.every((v) => v.location !== null),
-      ),
-      map(() => VehicleDataActions.retryLocationsSucceeded()),
+      map(([{ type }, vehiclesWithLocations]) => {
+        const allResolved =
+          type === VehicleDataActions.loadLocationsSuccess.type &&
+          vehiclesWithLocations.every((v) => v.location !== null);
+        return allResolved
+          ? VehicleDataActions.retryLocationsSucceeded()
+          : VehicleDataActions.manualRetryLocationsFailed();
+      }),
     ),
   );
 
