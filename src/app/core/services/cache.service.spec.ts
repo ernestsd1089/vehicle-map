@@ -3,8 +3,14 @@ import { CacheService } from './cache.service';
 describe('CacheService', () => {
   let service: CacheService;
   let now: number;
+  let store: Record<string, string>;
 
   beforeEach(() => {
+    store = {};
+    jest.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => store[key] ?? null);
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation((key, value) => { store[key] = value; });
+    jest.spyOn(Storage.prototype, 'removeItem').mockImplementation((key) => { delete store[key]; });
+
     now = Date.now();
     jest.spyOn(Date, 'now').mockReturnValue(now);
     service = new CacheService();
@@ -32,6 +38,21 @@ describe('CacheService', () => {
 
       expect(service.getIfValid<string>('key', 1000)).toBeNull();
     });
+
+    it('removes the localStorage entry when TTL has expired', () => {
+      service.set('key', 'data');
+      jest.spyOn(Date, 'now').mockReturnValue(now + 5000);
+
+      service.getIfValid('key', 1000);
+
+      expect(localStorage.removeItem).toHaveBeenCalledWith('vehicle-map_cache::key');
+    });
+
+    it('returns null when localStorage contains malformed JSON', () => {
+      store['vehicle-map_cache::key'] = 'not-json';
+
+      expect(service.getIfValid('key', 1000)).toBeNull();
+    });
   });
 
   describe('set', () => {
@@ -54,6 +75,18 @@ describe('CacheService', () => {
 
       expect(service.getIfValid('a', 10000)).toBe(1);
       expect(service.getIfValid('b', 10000)).toBe(2);
+    });
+
+    it('uses the vehicle-map_cache:: namespace prefix', () => {
+      service.set('key', 'data');
+
+      expect(localStorage.setItem).toHaveBeenCalledWith('vehicle-map_cache::key', expect.any(String));
+    });
+
+    it('does not throw when localStorage throws (e.g. quota exceeded)', () => {
+      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('QuotaExceededError'); });
+
+      expect(() => service.set('key', 'data')).not.toThrow();
     });
   });
 

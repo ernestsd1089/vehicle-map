@@ -1,20 +1,33 @@
 import { Injectable } from '@angular/core';
 
+const CACHE_KEY_PREFIX = 'vehicle-map_cache::';
+
 @Injectable({ providedIn: 'root' })
 export class CacheService {
-  private readonly entries = new Map<string, { data: unknown; timestamp: number }>();
-
   getIfValid<T>(key: string, ttlMs: number): T | null {
-    const entry = this.entries.get(key);
-    if (!entry || Date.now() - entry.timestamp >= ttlMs) return null;
-    return entry.data as T;
+    try {
+      const raw = localStorage.getItem(CACHE_KEY_PREFIX + key);
+      if (!raw) return null;
+      const entry: { data: T; timestamp: number } = JSON.parse(raw);
+      if (Date.now() - entry.timestamp >= ttlMs) {
+        localStorage.removeItem(CACHE_KEY_PREFIX + key);
+        return null;
+      }
+      return entry.data;
+    } catch {
+      return null;
+    }
   }
 
   set(key: string, data: unknown): void {
-    this.entries.set(key, { data, timestamp: Date.now() });
+    try {
+      localStorage.setItem(CACHE_KEY_PREFIX + key, JSON.stringify({ data, timestamp: Date.now() }));
+    } catch {
+      // storage quota exceeded — silently skip caching
+    }
   }
 
   delete(key: string): void {
-    this.entries.delete(key);
+    localStorage.removeItem(CACHE_KEY_PREFIX + key);
   }
 }
