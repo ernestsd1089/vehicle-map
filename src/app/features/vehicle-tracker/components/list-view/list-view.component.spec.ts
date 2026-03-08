@@ -71,6 +71,22 @@ describe('ListViewComponent', () => {
       await renderList();
       expect(screen.getByText('1 vehicle(s)')).toBeInTheDocument();
     });
+
+    it('shows the avatar image when the user has a foto', async () => {
+      const userWithFoto: User = { ...mockUser, owner: { ...mockUser.owner, foto: '/avatars/alice.jpg' } };
+      await render(ListViewComponent, {
+        providers: [provideMockStore({ selectors: buildSelectors({ users: [userWithFoto] }) })],
+      });
+
+      expect(screen.getByRole('img')).toHaveAttribute('src', '/avatars/alice.jpg');
+    });
+
+    it('shows initials placeholder when the user has no foto', async () => {
+      await renderList(); // mockUser has foto: ''
+
+      expect(screen.queryByRole('img')).not.toBeInTheDocument();
+      expect(screen.getByText('AS')).toBeInTheDocument();
+    });
   });
 
   describe('search', () => {
