@@ -6,10 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, NEVER } from 'rxjs';
 
 import { VehicleDetailsComponent } from './vehicle-details.component';
-import {
-  selectSelectedVehicle,
-  selectSelectedVehicleLocation,
-} from '../../store/vehicle-data/vehicle-data.reducer';
+import { VehicleDataFeature } from '../../store/vehicle-data/vehicle-data.reducer';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
 import { GeocodingService } from '../../services/geocoding.service';
 import { Vehicle } from '../../models/vehicle.model';
@@ -38,8 +35,8 @@ function buildProviders(overrides: {
   return [
     provideMockStore({
       selectors: [
-        { selector: selectSelectedVehicle, value: vehicle },
-        { selector: selectSelectedVehicleLocation, value: location },
+        { selector: VehicleDataFeature.selectSelectedVehicle, value: vehicle },
+        { selector: VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleLocation, value: location },
       ],
     }),
     { provide: GeocodingService, useValue: { reverseGeocode } },
@@ -142,8 +139,8 @@ describe('VehicleDetailsComponent', () => {
         providers: [
           provideMockStore({
             selectors: [
-              { selector: selectSelectedVehicle, value: mockVehicle },
-              { selector: selectSelectedVehicleLocation, value: mockLocation },
+              { selector: VehicleDataFeature.selectSelectedVehicle, value: mockVehicle },
+              { selector: VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleLocation, value: mockLocation },
             ],
           }),
           { provide: GeocodingService, useValue: { reverseGeocode: jest.fn().mockReturnValue(NEVER) } },

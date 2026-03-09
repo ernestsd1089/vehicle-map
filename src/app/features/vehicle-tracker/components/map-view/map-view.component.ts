@@ -21,15 +21,19 @@ import { boundingExtent } from 'ol/extent';
 import { fromLonLat } from 'ol/proj';
 import { defaults, Zoom } from 'ol/control';
 
-import {
-  selectLocatedVehicles,
-  selectSelectedVehicleLocation,
-} from '../../store/vehicle-data/vehicle-data.reducer';
+import { VehicleDataFeature } from '../../store/vehicle-data/vehicle-data.reducer';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
-import { MapMarkerManager } from './map-marker.manager';
-import { MapClusterManager } from './map-cluster.manager';
-
-export const VEHICLE_SELECT_ZOOM = 18;
+import { MapMarkerManager } from './helpers/map-marker.manager';
+import { MapClusterManager } from './helpers/map-cluster.manager';
+import {
+  MAP_ANIMATION_DURATION,
+  MAP_CLUSTER_DISTANCE,
+  MAP_FIT_MAX_ZOOM,
+  MAP_FIT_PADDING,
+  MAP_INITIAL_CENTER,
+  MAP_INITIAL_ZOOM,
+  MAP_VEHICLE_SELECT_ZOOM,
+} from './helpers/map-view.constants';
 
 @Component({
   selector: 'app-map-view',
@@ -48,7 +52,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
   private clusterManager!: MapClusterManager;
 
   private readonly vectorSource = new VectorSource();
-  private readonly clusterSource = new Cluster({ source: this.vectorSource, distance: 50 });
+  private readonly clusterSource = new Cluster({ source: this.vectorSource, distance: MAP_CLUSTER_DISTANCE });
 
   ngAfterViewInit(): void {
     this.map = new Map({
@@ -57,7 +61,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
         new TileLayer({ source: new OSM() }),
         new VectorLayer({ source: this.clusterSource, opacity: 0 }),
       ],
-      view: new View({ center: fromLonLat([24.105186, 56.946285]), zoom: 12 }),
+      view: new View({ center: fromLonLat(MAP_INITIAL_CENTER), zoom: MAP_INITIAL_ZOOM }),
       controls: defaults({ zoom: false }).extend([new Zoom({ className: 'ol-zoom' })]),
     });
 
@@ -68,15 +72,15 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
     this.map.on('moveend', () => this.clusterManager.update(this.markerManager.getMarkers()));
 
     this.store
-      .select(selectSelectedVehicleLocation)
+      .select(VehicleDataFeature.selectSelectedVehicleLocation)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((location) => {
         this.markerManager.updateSelection(location?.vehicleid ?? null);
-        if (location) this.panToPoint(location.lon, location.lat, VEHICLE_SELECT_ZOOM);
+        if (location) this.panToPoint(location.lon, location.lat, MAP_VEHICLE_SELECT_ZOOM);
       });
 
     this.store
-      .select(selectLocatedVehicles)
+      .select(VehicleDataFeature.selectLocatedVehicles)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vehicles) => {
         this.clusterManager.clear();
@@ -88,12 +92,12 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
   }
 
   private panToPoint(lon: number, lat: number, zoom?: number): void {
-    this.map.getView().animate({ center: fromLonLat([lon, lat]), zoom, duration: 300 });
+    this.map.getView().animate({ center: fromLonLat([lon, lat]), zoom, duration: MAP_ANIMATION_DURATION });
   }
 
   private fitToCoords(coords: number[][]): void {
     if (coords.length === 0) return;
-    this.map.getView().fit(boundingExtent(coords), { padding: [50, 50, 50, 50], maxZoom: 15, duration: 300 });
+    this.map.getView().fit(boundingExtent(coords), { padding: MAP_FIT_PADDING, maxZoom: MAP_FIT_MAX_ZOOM, duration: MAP_ANIMATION_DURATION });
   }
 
   private panToVehicles(locations: { lat: number; lon: number }[]): void {

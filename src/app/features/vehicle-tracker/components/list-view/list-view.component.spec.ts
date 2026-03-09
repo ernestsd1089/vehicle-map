@@ -5,7 +5,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 
 import { ListViewComponent } from './list-view.component';
 import { UsersFeature } from '../../store/users/users.reducer';
-import { VehicleDataFeature, selectVehiclesWithLocations } from '../../store/vehicle-data/vehicle-data.reducer';
+import { VehicleDataFeature } from '../../store/vehicle-data/vehicle-data.reducer';
 import { UsersActions } from '../../store/users/users.actions';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
 import { User } from '../../models/user.model';
@@ -49,7 +49,7 @@ function buildSelectors(overrides: Partial<{
     { selector: UsersFeature.selectUsers, value: opts.users },
     { selector: UsersFeature.selectSelectedUserId, value: opts.selectedUserId },
     { selector: VehicleDataFeature.selectSelectedVehicleId, value: opts.selectedVehicleId },
-    { selector: selectVehiclesWithLocations, value: opts.vehiclesWithLocations },
+    { selector: VehicleDataFeature.selectVehiclesWithLocations, value: opts.vehiclesWithLocations },
     { selector: VehicleDataFeature.selectLoading, value: opts.loading },
   ];
 }

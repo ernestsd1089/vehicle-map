@@ -6,9 +6,12 @@ import { catchError, filter, map, of, switchMap, tap, timer, withLatestFrom } fr
 import { retryWithCountdown } from '../../../../core/operators/retry-with-countdown';
 import { CacheService } from '../../../../core/services/cache.service';
 import { MobiService, LOCATIONS_KEY } from '../../services/mobi.service';
+
 import { UsersActions } from '../users/users.actions';
 import { VehicleDataActions } from './vehicle-data.actions';
-import { selectVehiclesWithLocations } from './vehicle-data.reducer';
+import { VehicleDataFeature } from './vehicle-data.reducer';
+
+const LOCATION_RELOAD_INTERVAL = 60_000;
 
 @Injectable()
 export class VehicleDataEffects {
@@ -46,7 +49,7 @@ export class VehicleDataEffects {
         this.locationRetryPending = false;
         return wasRetrying;
       }),
-      withLatestFrom(this.store.select(selectVehiclesWithLocations)),
+      withLatestFrom(this.store.select(VehicleDataFeature.selectVehiclesWithLocations)),
       map(([{ type }, vehiclesWithLocations]) => {
         const allResolved =
           type === VehicleDataActions.loadLocationsSuccess.type &&
@@ -81,7 +84,7 @@ export class VehicleDataEffects {
     this.actions$.pipe(
       ofType(UsersActions.selectUser),
       switchMap(({ userId }) =>
-        timer(60_000, 60_000).pipe(
+        timer(LOCATION_RELOAD_INTERVAL, LOCATION_RELOAD_INTERVAL).pipe(
           switchMap(() => {
             this.cache.delete(`${LOCATIONS_KEY}-${userId}`);
             return this.mobiService.getLocations(userId).pipe(

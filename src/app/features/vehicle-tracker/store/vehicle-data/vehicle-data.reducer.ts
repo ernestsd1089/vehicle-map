@@ -38,47 +38,50 @@ export const VehicleDataFeature = createFeature({
       selectedVehicleId: null,
     })),
   ),
+  extraSelectors: ({ selectSelectedVehicleId, selectLocations }) => {
+    const selectVehiclesWithLocations = createSelector(
+      UsersFeature.selectSelectedUserId,
+      UsersFeature.selectUsers,
+      selectLocations,
+      (selectedUserId, users, locations) => {
+        const user = users.find((u) => u.userid === selectedUserId);
+        if (!user) return [];
+        return user.vehicles.map((vehicle) => {
+          const l = locations[vehicle.vehicleid];
+          return {
+            ...vehicle,
+            location: l && isValidLocation(l.lat, l.lon) ? l : null,
+          };
+        });
+      },
+    );
+
+    const selectLocatedVehicles = createSelector(selectVehiclesWithLocations, (vehicles) =>
+      vehicles.filter((v): v is typeof v & { location: VehicleLocation } => v.location !== null),
+    );
+
+    const selectSelectedVehicleLocation = createSelector(
+      selectSelectedVehicleId,
+      selectLocations,
+      (selectedVehicleId, locations) => {
+        if (!selectedVehicleId) return null;
+        return locations[selectedVehicleId] ?? null;
+      },
+    );
+
+    const selectSelectedVehicle = createSelector(
+      UsersFeature.selectUsers,
+      selectSelectedVehicleId,
+      (users, selectedVehicleId) => {
+        if (!selectedVehicleId) return null;
+        for (const user of users) {
+          const vehicle = user.vehicles.find((v) => v.vehicleid === selectedVehicleId);
+          if (vehicle) return vehicle;
+        }
+        return null;
+      },
+    );
+
+    return { selectVehiclesWithLocations, selectLocatedVehicles, selectSelectedVehicleLocation, selectSelectedVehicle };
+  },
 });
-
-export const selectVehiclesWithLocations = createSelector(
-  UsersFeature.selectSelectedUserId,
-  UsersFeature.selectUsers,
-  VehicleDataFeature.selectLocations,
-  (selectedUserId, users, locations) => {
-    const user = users.find((u) => u.userid === selectedUserId);
-    if (!user) return [];
-    return user.vehicles.map((vehicle) => {
-      const l = locations[vehicle.vehicleid];
-      return {
-        ...vehicle,
-        location: l && isValidLocation(l.lat, l.lon) ? l : null,
-      };
-    });
-  },
-);
-
-export const selectLocatedVehicles = createSelector(selectVehiclesWithLocations, (vehicles) =>
-  vehicles.filter((v): v is typeof v & { location: VehicleLocation } => v.location !== null),
-);
-
-export const selectSelectedVehicleLocation = createSelector(
-  VehicleDataFeature.selectSelectedVehicleId,
-  VehicleDataFeature.selectLocations,
-  (selectedVehicleId, locations) => {
-    if (!selectedVehicleId) return null;
-    return locations[selectedVehicleId] ?? null;
-  },
-);
-
-export const selectSelectedVehicle = createSelector(
-  UsersFeature.selectUsers,
-  VehicleDataFeature.selectSelectedVehicleId,
-  (users, selectedVehicleId) => {
-    if (!selectedVehicleId) return null;
-    for (const user of users) {
-      const vehicle = user.vehicles.find((v) => v.vehicleid === selectedVehicleId);
-      if (vehicle) return vehicle;
-    }
-    return null;
-  },
-);

@@ -5,11 +5,9 @@ import { tap } from 'rxjs';
 
 import { UsersActions } from '../../features/vehicle-tracker/store/users/users.actions';
 import { VehicleDataActions } from '../../features/vehicle-tracker/store/vehicle-data/vehicle-data.actions';
+import { SNACKBAR_DURATION, SNACKBAR_POSITION } from '../../shared/constants/snackbar.constants';
 
-const BASE_CONFIG = {
-  horizontalPosition: 'right' as const,
-  verticalPosition: 'top' as const,
-};
+const BASE_CONFIG = SNACKBAR_POSITION;
 
 const SUCCESS_MESSAGE: Record<string, string> = {
   [UsersActions.retryLoadUsersSucceeded.type]: 'User list loaded successfully.',
@@ -29,7 +27,7 @@ export class NotificationEffects {
           this.snackBar.open(`Failed to load data. Retrying in ${retryIn}s...`, undefined, {
             ...BASE_CONFIG,
             panelClass: 'snackbar-error',
-            duration: 1000,
+            duration: SNACKBAR_DURATION.TRANSIENT,
           }),
         ),
       ),
@@ -44,7 +42,7 @@ export class NotificationEffects {
           this.snackBar.open(SUCCESS_MESSAGE[type], undefined, {
             ...BASE_CONFIG,
             panelClass: 'snackbar-success',
-            duration: 3000,
+            duration: SNACKBAR_DURATION.RESULT,
           }),
         ),
       ),
@@ -59,7 +57,7 @@ export class NotificationEffects {
           this.snackBar.open('Some vehicle locations could not be retrieved.', undefined, {
             ...BASE_CONFIG,
             panelClass: 'snackbar-error',
-            duration: 3000,
+            duration: SNACKBAR_DURATION.RESULT,
           }),
         ),
       ),

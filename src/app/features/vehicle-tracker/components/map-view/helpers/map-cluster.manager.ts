@@ -6,9 +6,9 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { boundingExtent } from 'ol/extent';
 
-import { MarkerComponent } from '../../../../shared/components/marker/marker.component';
+import { MarkerComponent } from '../../../../../shared/components/marker/marker.component';
 import { MarkerEntry } from './map-marker.manager';
-import { VEHICLE_SELECT_ZOOM } from './map-view.component';
+import { MAP_ANIMATION_DURATION, MAP_CLUSTER_FIT_PADDING, MAP_VEHICLE_SELECT_ZOOM } from './map-view.constants';
 
 export class MapClusterManager {
   private clusterOverlays: { overlay: Overlay; ref: ComponentRef<MarkerComponent> }[] = [];
@@ -56,7 +56,7 @@ export class MapClusterManager {
       const coords = features.map((f) => (f.getGeometry() as Point).getCoordinates());
       this.map
         .getView()
-        .fit(boundingExtent(coords), { padding: [100, 100, 100, 100], maxZoom: VEHICLE_SELECT_ZOOM, duration: 300 });
+        .fit(boundingExtent(coords), { padding: MAP_CLUSTER_FIT_PADDING, maxZoom: MAP_VEHICLE_SELECT_ZOOM, duration: MAP_ANIMATION_DURATION });
     });
 
     const overlay = new Overlay({
