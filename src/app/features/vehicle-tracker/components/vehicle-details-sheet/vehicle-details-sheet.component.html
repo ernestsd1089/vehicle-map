@@ -3,19 +3,21 @@
 @if (vehicle(); as v) {
   <div class="flex flex-row">
     <div class="relative w-28 shrink-0">
-      @if (imgError()) {
+      @if (showImgPlaceholder()) {
         <div class="w-full h-full bg-gray-100 flex items-center justify-center">
           <mat-icon class="text-gray-300 text-4xl! w-auto! h-auto!">directions_car</mat-icon>
         </div>
       }
-      <img
-        [src]="v.foto"
-        [alt]="v.make + ' ' + v.model"
-        [class.hidden]="imgError()"
-        class="w-full h-full object-cover"
-        (error)="imgError.set(true)"
-        (load)="imgError.set(false)"
-      />
+      @if (v.foto) {
+        <img
+          [src]="v.foto"
+          [alt]="v.make + ' ' + v.model"
+          [class.hidden]="showImgPlaceholder()"
+          class="w-full h-full object-cover"
+          (error)="imgError.set(true)"
+          (load)="imgLoaded.set(true)"
+        />
+      }
     </div>
 
     <div class="flex flex-col flex-1 min-w-0">
