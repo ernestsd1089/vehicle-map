@@ -5,7 +5,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, NEVER } from 'rxjs';
 
-import { VehicleDetailsComponent } from './vehicle-details.component';
+import { VehicleDetailsSheetComponent } from './vehicle-details-sheet.component';
 import {
   selectSelectedVehicle,
   selectSelectedVehicleLocation,
@@ -47,10 +47,10 @@ function buildProviders(overrides: {
   ];
 }
 
-describe('VehicleDetailsComponent', () => {
+describe('VehicleDetailsSheetComponent', () => {
   describe('when no vehicle is selected', () => {
     it('renders nothing', async () => {
-      const { container } = await render(VehicleDetailsComponent, {
+      const { container } = await render(VehicleDetailsSheetComponent, {
         providers: buildProviders({ vehicle: null, location: null, address: null }),
       });
 
@@ -60,31 +60,31 @@ describe('VehicleDetailsComponent', () => {
 
   describe('when a vehicle is selected', () => {
     it('renders the vehicle year, make and model', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders() });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
 
       expect(screen.getByText('2020 Toyota Camry')).toBeInTheDocument();
     });
 
     it('renders the color hex value', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders() });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
 
       expect(screen.getByText('#ff0000')).toBeInTheDocument();
     });
 
     it('renders the VIN', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders() });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
 
       expect(screen.getByText('VIN001')).toBeInTheDocument();
     });
 
     it('renders the geocoded address', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders({ address: 'Riga, Latvia' }) });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders({ address: 'Riga, Latvia' }) });
 
       expect(screen.getByText('Riga, Latvia')).toBeInTheDocument();
     });
 
     it('shows a Google Maps link when location is set', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders() });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
 
       const link = screen.getByRole('link');
       expect(link).toHaveAttribute('href', expect.stringContaining('56.946'));
@@ -94,7 +94,7 @@ describe('VehicleDetailsComponent', () => {
 
   describe('close', () => {
     it('dispatches deselectVehicle when the close button is clicked', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders() });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
       const store = TestBed.inject(MockStore);
       const spy = jest.spyOn(store, 'dispatch');
 
@@ -114,7 +114,7 @@ describe('VehicleDetailsComponent', () => {
     });
 
     it('copies the VIN to the clipboard when the VIN row is clicked', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders() });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
 
       await userEvent.click(screen.getByText('VIN001'));
 
@@ -122,7 +122,7 @@ describe('VehicleDetailsComponent', () => {
     });
 
     it('opens a snackbar after copying', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders() });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
       const snackBar = TestBed.inject(MatSnackBar);
 
       await userEvent.click(screen.getByText('VIN001'));
@@ -138,7 +138,7 @@ describe('VehicleDetailsComponent', () => {
 
   describe('address display', () => {
     it('shows "Loading address..." while the geocoding request is pending', async () => {
-      await render(VehicleDetailsComponent, {
+      await render(VehicleDetailsSheetComponent, {
         providers: [
           provideMockStore({
             selectors: [
@@ -155,13 +155,13 @@ describe('VehicleDetailsComponent', () => {
     });
 
     it('shows an empty address span (not "Loading...") when geocoding returns null', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders({ address: null }) });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders({ address: null }) });
 
       expect(screen.queryByText('Loading address...')).not.toBeInTheDocument();
     });
 
     it('does not render a Google Maps link when location is null', async () => {
-      await render(VehicleDetailsComponent, { providers: buildProviders({ location: null }) });
+      await render(VehicleDetailsSheetComponent, { providers: buildProviders({ location: null }) });
 
       expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
@@ -177,7 +177,7 @@ describe('VehicleDetailsComponent', () => {
     });
 
     it('does not write to clipboard when value is null', async () => {
-      const { fixture } = await render(VehicleDetailsComponent, { providers: buildProviders() });
+      const { fixture } = await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (fixture.componentInstance as any).copy('VIN', null);
@@ -186,7 +186,7 @@ describe('VehicleDetailsComponent', () => {
     });
 
     it('does not write to clipboard when value is undefined', async () => {
-      const { fixture } = await render(VehicleDetailsComponent, { providers: buildProviders() });
+      const { fixture } = await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (fixture.componentInstance as any).copy('VIN', undefined);
@@ -195,7 +195,7 @@ describe('VehicleDetailsComponent', () => {
     });
 
     it('does not write to clipboard when value is an empty string', async () => {
-      const { fixture } = await render(VehicleDetailsComponent, { providers: buildProviders() });
+      const { fixture } = await render(VehicleDetailsSheetComponent, { providers: buildProviders() });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (fixture.componentInstance as any).copy('VIN', '');

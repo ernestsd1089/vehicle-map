@@ -134,6 +134,112 @@ describe('ListViewComponent', () => {
 
       expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
     });
+
+    it('is case-insensitive when filtering by owner name', async () => {
+      await renderList();
+
+      await userEvent.type(screen.getByRole('textbox'), 'ALICE');
+
+      expect(screen.getByText('Alice Smith')).toBeInTheDocument();
+    });
+
+    it('filters by vehicle model', async () => {
+      await renderList();
+
+      await userEvent.type(screen.getByRole('textbox'), 'camry');
+
+      expect(screen.getByText('Alice Smith')).toBeInTheDocument();
+    });
+
+    it('filters by vehicle year', async () => {
+      await renderList();
+
+      await userEvent.type(screen.getByRole('textbox'), '2020');
+
+      expect(screen.getByText('Alice Smith')).toBeInTheDocument();
+    });
+
+    it('filters by VIN', async () => {
+      await renderList();
+
+      await userEvent.type(screen.getByRole('textbox'), 'VIN001');
+
+      expect(screen.getByText('Alice Smith')).toBeInTheDocument();
+    });
+  });
+
+  describe('search with null/undefined/empty vehicle fields', () => {
+    it('does not crash and excludes user when vehicle make is null', async () => {
+      const vehicle = { ...mockVehicle, make: null as unknown as string };
+      const user: User = { ...mockUser, vehicles: [vehicle] };
+      await render(ListViewComponent, {
+        providers: [provideMockStore({ selectors: buildSelectors({ users: [user] }) })],
+      });
+
+      await userEvent.type(screen.getByRole('textbox'), 'toyota');
+
+      expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+    });
+
+    it('does not crash and excludes user when vehicle model is null', async () => {
+      const vehicle = { ...mockVehicle, model: null as unknown as string };
+      const user: User = { ...mockUser, vehicles: [vehicle] };
+      await render(ListViewComponent, {
+        providers: [provideMockStore({ selectors: buildSelectors({ users: [user] }) })],
+      });
+
+      await userEvent.type(screen.getByRole('textbox'), 'camry');
+
+      expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+    });
+
+    it('does not crash and excludes user when vehicle year is undefined', async () => {
+      const vehicle = { ...mockVehicle, year: undefined as unknown as string };
+      const user: User = { ...mockUser, vehicles: [vehicle] };
+      await render(ListViewComponent, {
+        providers: [provideMockStore({ selectors: buildSelectors({ users: [user] }) })],
+      });
+
+      await userEvent.type(screen.getByRole('textbox'), '2020');
+
+      expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+    });
+
+    it('does not crash and excludes user when vehicle vin is undefined', async () => {
+      const vehicle = { ...mockVehicle, vin: undefined as unknown as string };
+      const user: User = { ...mockUser, vehicles: [vehicle] };
+      await render(ListViewComponent, {
+        providers: [provideMockStore({ selectors: buildSelectors({ users: [user] }) })],
+      });
+
+      await userEvent.type(screen.getByRole('textbox'), 'VIN001');
+
+      expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+    });
+
+    it('does not crash when all vehicle fields are empty strings', async () => {
+      const vehicle: Vehicle = { ...mockVehicle, make: '', model: '', year: '', vin: '' };
+      const user: User = { ...mockUser, vehicles: [vehicle] };
+      await render(ListViewComponent, {
+        providers: [provideMockStore({ selectors: buildSelectors({ users: [user] }) })],
+      });
+
+      await userEvent.type(screen.getByRole('textbox'), 'toyota');
+
+      expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+    });
+
+    it('does not crash when the user has no vehicles', async () => {
+      const user: User = { ...mockUser, vehicles: [] };
+      await render(ListViewComponent, {
+        providers: [provideMockStore({ selectors: buildSelectors({ users: [user] }) })],
+      });
+
+      await userEvent.type(screen.getByRole('textbox'), 'toyota');
+
+      expect(screen.queryByText('Alice Smith')).not.toBeInTheDocument();
+    });
+
   });
 
   describe('user selection', () => {
