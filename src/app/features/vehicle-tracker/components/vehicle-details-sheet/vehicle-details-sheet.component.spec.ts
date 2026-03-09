@@ -36,7 +36,7 @@ function buildProviders(overrides: {
     provideMockStore({
       selectors: [
         { selector: VehicleDataFeature.selectSelectedVehicle, value: vehicle },
-        { selector: VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleLocation, value: location },
+        { selector: VehicleDataFeature.selectSelectedVehicleLocation, value: location },
       ],
     }),
     { provide: GeocodingService, useValue: { reverseGeocode } },
@@ -140,7 +140,7 @@ describe('VehicleDetailsSheetComponent', () => {
           provideMockStore({
             selectors: [
               { selector: VehicleDataFeature.selectSelectedVehicle, value: mockVehicle },
-              { selector: VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleLocation, value: mockLocation },
+              { selector: VehicleDataFeature.selectSelectedVehicleLocation, value: mockLocation },
             ],
           }),
           { provide: GeocodingService, useValue: { reverseGeocode: jest.fn().mockReturnValue(NEVER) } },

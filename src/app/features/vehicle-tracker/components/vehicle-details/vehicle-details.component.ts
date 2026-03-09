@@ -24,13 +24,13 @@ export class VehicleDetailsComponent {
   private readonly snackBar = inject(MatSnackBar);
 
   protected readonly vehicle = this.store.selectSignal(VehicleDataFeature.selectSelectedVehicle);
-  protected readonly vehicleLocation = this.store.selectSignal(VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleLocation);
+  protected readonly vehicleLocation = this.store.selectSignal(VehicleDataFeature.selectSelectedVehicleLocation);
   protected readonly imgError = linkedSignal(() => { this.vehicle(); return false; });
   protected readonly imgLoaded = linkedSignal(() => { this.vehicle(); return false; });
   protected readonly showImgPlaceholder = computed(() => !this.imgLoaded() || this.imgError());
 
   protected readonly address = toSignal(
-    this.store.select(VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleLocation).pipe(
+    this.store.select(VehicleDataFeature.selectSelectedVehicleLocation).pipe(
       switchMap((location) =>
         location ? this.geocoding.reverseGeocode(location.lat, location.lon) : of(null),
       ),

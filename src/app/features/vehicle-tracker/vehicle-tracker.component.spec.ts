@@ -26,13 +26,13 @@ jest.mock('ol/control', () => ({
 }));
 
 const baseSelectors = [
-  { selector: VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleId, value: null },
+  { selector: VehicleDataFeature.selectSelectedVehicleId, value: null },
   { selector: UsersFeature.selectUsers, value: [] },
   { selector: UsersFeature.selectSelectedUserId, value: null },
   { selector: VehicleDataFeature.selectLoading, value: false },
   { selector: VehicleDataFeature.selectVehiclesWithLocations, value: [] },
   { selector: VehicleDataFeature.selectSelectedVehicle, value: null },
-  { selector: VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleLocation, value: null },
+  { selector: VehicleDataFeature.selectSelectedVehicleLocation, value: null },
 ];
 
 const desktopBreakpoint = { provide: BreakpointObserver, useValue: { observe: jest.fn().mockReturnValue(of({ matches: false })) } };
@@ -47,10 +47,10 @@ const baseProviders = [
 const mockVehicle = { vehicleid: 1, make: 'Toyota', model: 'Camry', year: '2020', color: '#ff0000', foto: '', vin: 'V1' };
 const selectorsWithVehicle = [
   ...baseSelectors.filter(s =>
-    s.selector !== VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleId &&
+    s.selector !== VehicleDataFeature.selectSelectedVehicleId &&
     s.selector !== VehicleDataFeature.selectSelectedVehicle
   ),
-  { selector: VehicleDataFeature.VehicleDataFeature.selectSelectedVehicleId, value: 1 },
+  { selector: VehicleDataFeature.selectSelectedVehicleId, value: 1 },
   { selector: VehicleDataFeature.selectSelectedVehicle, value: mockVehicle },
 ];
 
