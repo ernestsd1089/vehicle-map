@@ -9,7 +9,7 @@ import { MobiService, LOCATIONS_KEY } from '../../services/mobi.service';
 
 import { UsersActions } from '../users/users.actions';
 import { VehicleDataActions } from './vehicle-data.actions';
-import { selectVehiclesWithLocations } from './vehicle-data.reducer';
+import { VehicleDataFeature } from './vehicle-data.reducer';
 
 const LOCATION_RELOAD_INTERVAL = 60_000;
 
@@ -49,7 +49,7 @@ export class VehicleDataEffects {
         this.locationRetryPending = false;
         return wasRetrying;
       }),
-      withLatestFrom(this.store.select(selectVehiclesWithLocations)),
+      withLatestFrom(this.store.select(VehicleDataFeature.selectVehiclesWithLocations)),
       map(([{ type }, vehiclesWithLocations]) => {
         const allResolved =
           type === VehicleDataActions.loadLocationsSuccess.type &&

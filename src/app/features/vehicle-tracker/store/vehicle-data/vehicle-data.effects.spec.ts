@@ -7,7 +7,7 @@ import { Action } from '@ngrx/store';
 import { VehicleDataEffects } from './vehicle-data.effects';
 import { VehicleDataActions } from './vehicle-data.actions';
 import { UsersActions } from '../users/users.actions';
-import { selectVehiclesWithLocations } from './vehicle-data.reducer';
+import { VehicleDataFeature } from './vehicle-data.reducer';
 import { MobiService, LOCATIONS_KEY } from '../../services/mobi.service';
 import { CacheService } from '../../../../core/services/cache.service';
 import { VehicleLocation } from '../../models/location.model';
@@ -75,7 +75,7 @@ describe('VehicleDataEffects', () => {
     const subscribeToRetryStarted = () => effects.onLocationRetryStarted$.subscribe();
 
     it('dispatches retryLocationsSucceeded when all vehicles have locations after a retry', (done) => {
-      store.overrideSelector(selectVehiclesWithLocations, [vehicleWithLocation]);
+      store.overrideSelector(VehicleDataFeature.selectVehiclesWithLocations, [vehicleWithLocation]);
       store.refreshState();
       subscribeToRetryStarted();
 
@@ -89,7 +89,7 @@ describe('VehicleDataEffects', () => {
     });
 
     it('dispatches manualRetryLocationsFailed when some vehicles have no location after a retry', (done) => {
-      store.overrideSelector(selectVehiclesWithLocations, [vehicleWithLocation, vehicleWithoutLocation]);
+      store.overrideSelector(VehicleDataFeature.selectVehiclesWithLocations, [vehicleWithLocation, vehicleWithoutLocation]);
       store.refreshState();
       subscribeToRetryStarted();
 
@@ -103,7 +103,7 @@ describe('VehicleDataEffects', () => {
     });
 
     it('dispatches manualRetryLocationsFailed on loadLocationsFailure during retry', (done) => {
-      store.overrideSelector(selectVehiclesWithLocations, []);
+      store.overrideSelector(VehicleDataFeature.selectVehiclesWithLocations, []);
       store.refreshState();
       subscribeToRetryStarted();
 
@@ -117,7 +117,7 @@ describe('VehicleDataEffects', () => {
     });
 
     it('does not dispatch when not retrying', () => {
-      store.overrideSelector(selectVehiclesWithLocations, [vehicleWithLocation]);
+      store.overrideSelector(VehicleDataFeature.selectVehiclesWithLocations, [vehicleWithLocation]);
       store.refreshState();
 
       const dispatched: Action[] = [];

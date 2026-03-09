@@ -1,10 +1,4 @@
-import {
-  VehicleDataFeature,
-  selectVehiclesWithLocations,
-  selectLocatedVehicles,
-  selectSelectedVehicleLocation,
-  selectSelectedVehicle,
-} from './vehicle-data.reducer';
+import { VehicleDataFeature } from './vehicle-data.reducer';
 import { VehicleDataActions } from './vehicle-data.actions';
 import { UsersActions } from '../users/users.actions';
 import { initialState } from './vehicle-data.state';
@@ -125,7 +119,7 @@ describe('VehicleDataFeature reducer', () => {
 });
 
 describe('selectVehiclesWithLocations', () => {
-  const project = selectVehiclesWithLocations.projector;
+  const project = VehicleDataFeature.selectVehiclesWithLocations.projector;
 
   it('returns empty array when no user is selected', () => {
     const result = project(null, [mockUser], { 1: mockLocation });
@@ -155,7 +149,7 @@ describe('selectVehiclesWithLocations', () => {
 });
 
 describe('selectLocatedVehicles', () => {
-  const project = selectLocatedVehicles.projector;
+  const project = VehicleDataFeature.selectLocatedVehicles.projector;
 
   it('filters out vehicles without a location', () => {
     const vehicles = [
@@ -184,7 +178,7 @@ describe('selectLocatedVehicles', () => {
 });
 
 describe('selectSelectedVehicleLocation', () => {
-  const project = selectSelectedVehicleLocation.projector;
+  const project = VehicleDataFeature.selectSelectedVehicleLocation.projector;
 
   it('returns null when no vehicle is selected', () => {
     expect(project(null, { 1: mockLocation })).toBeNull();
@@ -200,7 +194,7 @@ describe('selectSelectedVehicleLocation', () => {
 });
 
 describe('selectSelectedVehicle', () => {
-  const project = selectSelectedVehicle.projector;
+  const project = VehicleDataFeature.selectSelectedVehicle.projector;
 
   it('returns null when no vehicle is selected', () => {
     expect(project([mockUser], null)).toBeNull();

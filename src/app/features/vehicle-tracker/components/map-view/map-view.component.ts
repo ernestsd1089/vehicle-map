@@ -21,10 +21,7 @@ import { boundingExtent } from 'ol/extent';
 import { fromLonLat } from 'ol/proj';
 import { defaults, Zoom } from 'ol/control';
 
-import {
-  selectLocatedVehicles,
-  selectSelectedVehicleLocation,
-} from '../../store/vehicle-data/vehicle-data.reducer';
+import { VehicleDataFeature } from '../../store/vehicle-data/vehicle-data.reducer';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
 import { MapMarkerManager } from './helpers/map-marker.manager';
 import { MapClusterManager } from './helpers/map-cluster.manager';
@@ -75,7 +72,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
     this.map.on('moveend', () => this.clusterManager.update(this.markerManager.getMarkers()));
 
     this.store
-      .select(selectSelectedVehicleLocation)
+      .select(VehicleDataFeature.selectSelectedVehicleLocation)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((location) => {
         this.markerManager.updateSelection(location?.vehicleid ?? null);
@@ -83,7 +80,7 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
       });
 
     this.store
-      .select(selectLocatedVehicles)
+      .select(VehicleDataFeature.selectLocatedVehicles)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((vehicles) => {
         this.clusterManager.clear();
