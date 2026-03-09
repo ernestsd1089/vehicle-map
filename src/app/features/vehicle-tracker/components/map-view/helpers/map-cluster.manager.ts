@@ -6,7 +6,7 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { boundingExtent } from 'ol/extent';
 
-import { MarkerComponent } from '../../../../shared/components/marker/marker.component';
+import { MarkerComponent } from '../../../../../shared/components/marker/marker.component';
 import { MarkerEntry } from './map-marker.manager';
 import { MAP_ANIMATION_DURATION, MAP_CLUSTER_FIT_PADDING, MAP_VEHICLE_SELECT_ZOOM } from './map-view.constants';
 

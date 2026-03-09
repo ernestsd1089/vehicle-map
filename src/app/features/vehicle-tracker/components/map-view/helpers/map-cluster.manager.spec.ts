@@ -2,7 +2,7 @@ import { ComponentRef } from '@angular/core';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 
-import { MarkerComponent } from '../../../../shared/components/marker/marker.component';
+import { MarkerComponent } from '../../../../../shared/components/marker/marker.component';
 import { MarkerEntry } from './map-marker.manager';
 import { MAP_VEHICLE_SELECT_ZOOM } from './map-view.constants';
 import { MapClusterManager } from './map-cluster.manager';

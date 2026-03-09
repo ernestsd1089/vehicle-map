@@ -3,9 +3,9 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import { fromLonLat } from 'ol/proj';
 
-import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
-import { MarkerComponent } from '../../../../shared/components/marker/marker.component';
-import { VehicleLocation } from '../../models/location.model';
+import { VehicleDataActions } from '../../../store/vehicle-data/vehicle-data.actions';
+import { MarkerComponent } from '../../../../../shared/components/marker/marker.component';
+import { VehicleLocation } from '../../../models/location.model';
 import { MapMarkerManager } from './map-marker.manager';
 
 jest.mock('ol/Overlay', () => {

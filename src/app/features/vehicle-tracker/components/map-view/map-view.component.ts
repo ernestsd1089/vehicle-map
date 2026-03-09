@@ -26,8 +26,8 @@ import {
   selectSelectedVehicleLocation,
 } from '../../store/vehicle-data/vehicle-data.reducer';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
-import { MapMarkerManager } from './map-marker.manager';
-import { MapClusterManager } from './map-cluster.manager';
+import { MapMarkerManager } from './helpers/map-marker.manager';
+import { MapClusterManager } from './helpers/map-cluster.manager';
 import {
   MAP_ANIMATION_DURATION,
   MAP_CLUSTER_DISTANCE,
@@ -36,7 +36,7 @@ import {
   MAP_INITIAL_CENTER,
   MAP_INITIAL_ZOOM,
   MAP_VEHICLE_SELECT_ZOOM,
-} from './map-view.constants';
+} from './helpers/map-view.constants';
 
 @Component({
   selector: 'app-map-view',
