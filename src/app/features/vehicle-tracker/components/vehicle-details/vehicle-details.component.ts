@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, linkedSignal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -27,7 +27,9 @@ export class VehicleDetailsComponent {
 
   protected readonly vehicle = this.store.selectSignal(selectSelectedVehicle);
   protected readonly vehicleLocation = this.store.selectSignal(selectSelectedVehicleLocation);
-  protected readonly imgError = signal(false);
+  protected readonly imgError = linkedSignal(() => { this.vehicle(); return false; });
+  protected readonly imgLoaded = linkedSignal(() => { this.vehicle(); return false; });
+  protected readonly showImgPlaceholder = computed(() => !this.imgLoaded() || this.imgError());
 
   protected readonly address = toSignal(
     this.store.select(selectSelectedVehicleLocation).pipe(
