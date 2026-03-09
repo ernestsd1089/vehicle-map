@@ -50,7 +50,7 @@ export class ListViewComponent {
     const { name, surname } = user.owner;
     if (`${name} ${surname}`.toLowerCase().includes(query)) return true;
     return user.vehicles.some((v) =>
-      [v.make, v.model, v.year, v.vin].some((field) => field.toLowerCase().includes(query)),
+      [v.make, v.model, v.year, v.vin].some((field) => (field ?? '').toLowerCase().includes(query)),
     );
   }
 
