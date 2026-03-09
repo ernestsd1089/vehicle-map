@@ -6,8 +6,8 @@ import { CacheService } from '../../../core/services/cache.service';
 import { VehicleLocation } from '../models/location.model';
 import { User } from '../models/user.model';
 
-const USERS_TTL = 5 * 60 * 1000;
-const LOCATIONS_TTL = 30 * 1000;
+const USERS_CACHE_TTL = 5 * 60 * 1000;
+const LOCATIONS_CACHE_TTL = 30 * 1000;
 const USERS_KEY = 'users';
 export const LOCATIONS_KEY = 'locations';
 
@@ -17,7 +17,7 @@ export class MobiService {
   private readonly cache = inject(CacheService);
 
   getUsers(): Observable<User[]> {
-    const cached = this.cache.getIfValid<User[]>(USERS_KEY, USERS_TTL);
+    const cached = this.cache.getIfValid<User[]>(USERS_KEY, USERS_CACHE_TTL);
     if (cached) return of(cached);
 
     return this.http.get<{ data: User[] }>('/api/?op=list').pipe(
@@ -28,7 +28,7 @@ export class MobiService {
 
   getLocations(userId: number): Observable<VehicleLocation[]> {
     const cacheKey = LOCATIONS_KEY + `-${userId}`;
-    const cached = this.cache.getIfValid<VehicleLocation[]>(cacheKey, LOCATIONS_TTL);
+    const cached = this.cache.getIfValid<VehicleLocation[]>(cacheKey, LOCATIONS_CACHE_TTL);
     if (cached) return of(cached);
 
     return this.http
