@@ -4,7 +4,7 @@ import Point from 'ol/geom/Point';
 
 import { MarkerComponent } from '../../../../shared/components/marker/marker.component';
 import { MarkerEntry } from './map-marker.manager';
-import { VEHICLE_SELECT_ZOOM } from './map-view.component';
+import { MAP_VEHICLE_SELECT_ZOOM } from './map-view.constants';
 import { MapClusterManager } from './map-cluster.manager';
 
 jest.mock('ol/Overlay', () => {
@@ -252,7 +252,7 @@ describe('MapClusterManager', () => {
         expect.any(Array),
         expect.objectContaining({
           padding: [100, 100, 100, 100],
-          maxZoom: VEHICLE_SELECT_ZOOM,
+          maxZoom: MAP_VEHICLE_SELECT_ZOOM,
           duration: 300,
         }),
       );
