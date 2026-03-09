@@ -14,6 +14,7 @@ import {
 } from '../../store/vehicle-data/vehicle-data.reducer';
 import { VehicleDataActions } from '../../store/vehicle-data/vehicle-data.actions';
 import { GeocodingService } from '../../services/geocoding.service';
+import { SNACKBAR_DURATION, SNACKBAR_POSITION } from '../../../../shared/constants/snackbar.constants';
 
 @Component({
   selector: 'app-vehicle-details',
@@ -47,9 +48,8 @@ export class VehicleDetailsComponent {
     if (!value) return;
     navigator.clipboard.writeText(value).then(() => {
       this.snackBar.open(`${label} copied to clipboard`, undefined, {
-        duration: 2000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
+        ...SNACKBAR_POSITION,
+        duration: SNACKBAR_DURATION.COPY,
       });
     });
   }
