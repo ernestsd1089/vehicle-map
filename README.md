@@ -1,59 +1,70 @@
-# VehicleMap
+# Vehicle Map
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.0.
+A fleet management dashboard built with Angular 21, featuring real-time vehicle tracking on an interactive map.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Reverse geocoding** — Human-readable addresses for vehicle locations, with TTL-based localStorage caching to minimize API calls
+- **NgRx state management** — Centralised state using `createFeature` for vehicles and selected vehicle details
+- **Responsive layout** — Desktop sidebar + mobile bottom sheet layout using Angular Material
+- **Vehicle search** — Filter the vehicle list by make, model, year, or VIN in real time
+- **Marker clustering** — Nearby vehicles are combined into a single cluster marker showing the count; clicking zooms in to reveal individual vehicles
+
+## Tech Stack
+
+- Angular 21 + TypeScript
+- NgRx (state management)
+- Angular Material + Tailwind CSS v4
+- Jest + Angular Testing Library (unit tests)
+
+## Getting Started
+
+### Development server
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open `http://localhost:4200/`. The app reloads automatically on file changes.
 
-## Code scaffolding
+The dev server proxies `/api` requests to the upstream data source via `proxy.conf.json`. No additional configuration is needed for local development.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### Production build
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Output is placed in `dist/vehicle-map/browser/`. The production build hits the API directly (configured via `environment.prod.ts`), so no proxy is needed.
 
-## Running unit tests
+To preview the production build locally:
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+```bash
+npx serve dist/vehicle-map/browser
+```
+
+Then open `http://localhost:3000`.
+
+> **Windows / PowerShell note:** If you get a script execution policy error, run via Command Prompt (`cmd`) or fix it once with:
+>
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+> ```
+
+### Running unit tests
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+Uses Jest with `jest-preset-angular` and Angular Testing Library.
 
-For end-to-end (e2e) testing, run:
+## Implementation Notes
 
-```bash
-ng e2e
-```
+### Tailwind + Angular Material
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Tailwind utility classes occasionally need `!important` overrides to take precedence over Angular Material's component styles. Where this is done, it is intentional — Angular Material's encapsulated styles have higher specificity by default.
 
-## Additional Resources
+### Caching
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Reverse geocoding results are cached in localStorage with a TTL to avoid redundant requests for vehicles that haven't moved significantly.
