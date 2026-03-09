@@ -46,12 +46,6 @@ npx serve dist/vehicle-map/browser
 
 Then open `http://localhost:3000`.
 
-> **Windows / PowerShell note:** If you get a script execution policy error, run via Command Prompt (`cmd`) or fix it once with:
->
-> ```powershell
-> Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-> ```
-
 ### Running unit tests
 
 ```bash
