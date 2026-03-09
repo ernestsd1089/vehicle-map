@@ -16,6 +16,7 @@ A fleet management dashboard built with Angular 21, featuring real-time vehicle 
 - NgRx (state management)
 - Angular Material + Tailwind CSS v4
 - Jest + Angular Testing Library (unit tests)
+- OpenLayers (map)
 
 ## Getting Started
 
